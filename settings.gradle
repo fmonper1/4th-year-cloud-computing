@@ -1,6 +1,3 @@
-pluginManagement {
-	repositories {
-		gradlePluginPortal()
-	}
-}
-rootProject.name = 'demo'
+rootProject.name = 'cloud'
+include 'demo'
+
