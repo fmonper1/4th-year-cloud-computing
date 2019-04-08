@@ -1,0 +1,2 @@
+insert into application (name,client_id) values ('Test Application','testapp');
+insert into user (name,salt,pw_hash) values ('testuser','deef7134b6944d674e1f1a2837a06b87','0025a33d2818415668b687869566e47a')
