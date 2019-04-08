@@ -11,7 +11,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Login</title>
+    <title>Signup</title>
     <link href="<c:url value="/resources/style.css" />" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 </head>
@@ -24,7 +24,7 @@
                     ${error}
                     </div>
                 </c:if>
-                <form:form method="POST" modelAttribute="loginForm">
+                <form:form method="POST" modelAttribute="signupForm">
                     <div class="form-group">
                         <form:label path="username">Username</form:label>
                         <form:input class="form-control" path="username" placeholder="Username"/>
@@ -33,18 +33,14 @@
                         <form:label path="password">Password</form:label>
                         <form:input class="form-control" path="password" type="password" placeholder="Password"/>
                     </div>
-                    <input type="submit" value="Login" class="btn btn-primary btn-block"/>
-                    <a href="/signup" class="btn btn-primary btn-block" data-keep-params>Sign up</a>
+                    <div class="form-group">
+                        <form:label path="confirmPassword">Password</form:label>
+                        <form:input class="form-control" path="confirmPassword" type="password" placeholder="Confirm Password"/>
+                    </div>
+                    <input type="submit" value="Sign up" class="btn btn-primary btn-block"/>
                 </form:form>
             </div>
         </div>
     </div>
-    <script>
-        document.querySelector('a[data-keep-params]').addEventListener('click',function(e) {
-            e.preventDefault();
-            console.log(e);
-            window.location.href = this.getAttribute('href') + window.location.search;
-        });
-    </script>
 </body>
 </html>

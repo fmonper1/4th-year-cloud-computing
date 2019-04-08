@@ -28,7 +28,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 
 		logger.info("User: {}", user);
 		logger.info("ServletPath: {}", request.getServletPath());
-		if (user == null && !(request.getServletPath().equals("/login") || request.getServletPath().startsWith("/resources") || request.getServletPath().equals("/error"))) {
+		if (user == null && !(request.getServletPath().equals("/signup") || request.getServletPath().equals("/login") || request.getServletPath().startsWith("/resources") || request.getServletPath().equals("/error"))) {
 			response.sendRedirect(request.getContextPath() + "/login?" + request.getQueryString());
 			return false;
 		}
