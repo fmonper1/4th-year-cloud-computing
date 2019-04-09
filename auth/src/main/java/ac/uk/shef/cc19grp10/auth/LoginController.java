@@ -9,9 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -24,6 +22,7 @@ import javax.validation.Valid;
  * Created on 08/04/2019.
  */
 @Controller
+@RequestMapping("/login")
 public class LoginController {
 
 	private final Logger logger = LoggerFactory.getLogger(AuthController.class);
@@ -37,7 +36,7 @@ public class LoginController {
 	@Autowired
 	ApplicationRepository appRepo;
 
-	@RequestMapping( value= "/login", method = RequestMethod.GET)
+	@GetMapping
 	public ModelAndView login(
 			@RequestParam("client_id") String clientId)
 	{
@@ -50,7 +49,7 @@ public class LoginController {
 		return new ModelAndView("login","loginForm", new LoginForm());
 	}
 
-	@RequestMapping( value= "/login", method = RequestMethod.POST)
+	@PostMapping
 	public ModelAndView postLogin(
 			@Valid LoginForm loginForm,
 			@RequestParam("client_id") String clientId,
@@ -66,7 +65,7 @@ public class LoginController {
 
 		if(user!=null&&user.passwordMatches(loginForm.password,hashingStrategy)){
 
-			RedirectView redirectView = new RedirectView("/");
+			RedirectView redirectView = new RedirectView("auth");
 			redirectView.setPropagateQueryParams(true);
 			logger.info("user being set to: {} \n",user.toString());
 

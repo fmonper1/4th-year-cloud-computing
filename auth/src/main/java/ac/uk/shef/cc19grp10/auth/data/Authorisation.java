@@ -27,6 +27,9 @@ public class Authorisation {
 	@JoinColumn(name="applicationId", referencedColumnName="Id")
 	private Application application;
 
+	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+	private AccessToken accessToken;
+
 	public Authorisation(){}
 
 	public Authorisation(User user, Application application) {
@@ -45,6 +48,18 @@ public class Authorisation {
 
 	public boolean checkAuthCodeEncoded(String authCodeEncoded) {
 		return SecureUtils.bytesEqual(authCode, Base64.getUrlDecoder().decode(authCodeEncoded));
+	}
+
+	public Application getApplication() {
+		return application;
+	}
+
+	public AccessToken getAccessToken() {
+		return accessToken;
+	}
+
+	public void setAccessToken(AccessToken accessToken) {
+		this.accessToken = accessToken;
 	}
 }
 

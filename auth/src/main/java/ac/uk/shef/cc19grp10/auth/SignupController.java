@@ -9,9 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -26,6 +24,7 @@ import java.util.Map;
  * Created on 08/04/2019.
  */
 @Controller
+@RequestMapping("/signup")
 public class SignupController {
 
 	private final Logger logger = LoggerFactory.getLogger(AuthController.class);
@@ -39,19 +38,19 @@ public class SignupController {
 	@Autowired
 	ApplicationRepository appRepo;
 
-	@RequestMapping( value= "/signup", method = RequestMethod.GET)
+	@GetMapping
 	public ModelAndView signup()
 	{
 		return new ModelAndView("signup","signupForm", new SignupForm());
 	}
 
-	@RequestMapping( value= "/signup", method = RequestMethod.POST)
+	@PostMapping
 	public ModelAndView postSignup(
 			@Valid SignupForm signupForm,
 			@RequestParam("client_id") String clientId,
 			HttpServletRequest request)
 	{
-		logger.info("Login post query");
+		logger.info("Signup post query");
 		Application app = appRepo.findByClientId(clientId);
 		if (app == null){
 			return new ModelAndView("misconfigured","reason","Bad client_id");
@@ -76,7 +75,7 @@ public class SignupController {
 		User user = userRepo.save(new User(signupForm.username,signupForm.password,hashingStrategy));
 		request.getSession().setAttribute("user", user);
 
-		RedirectView redirectView = new RedirectView("/");
+		RedirectView redirectView = new RedirectView("/auth");
 		redirectView.setPropagateQueryParams(true);
 		return new ModelAndView(redirectView);
 	}

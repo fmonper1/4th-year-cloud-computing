@@ -24,7 +24,7 @@ subprojects{
 
     processResources {
         filesMatching("application.properties") {
-            expand(artifact: "${this.archivesBaseName}")
+            expand(artifact: "${archivesBaseName}")
         }
     }
 

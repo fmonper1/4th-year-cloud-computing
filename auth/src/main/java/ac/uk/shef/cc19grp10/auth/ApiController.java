@@ -32,7 +32,7 @@ public class ApiController {
 	private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
 	@RequestMapping("/users/{id}")
-	public User users(@PathVariable long id, @RequestParam("auth_code") String authCodeEncoded, @RequestParam("client_id") String clientId)
+	public User users(@PathVariable long id, @RequestParam("access_token") String accessTokenEncoded, @RequestParam("client_id") String clientId)
 	{
 		Optional<User> user = userRepo.findById(id);
 		if (!user.isPresent()){
@@ -40,7 +40,14 @@ public class ApiController {
 		}
 		Application app = appRepo.findByClientId(clientId);
 		Authorisation auth = authRepo.findByUserAndApplication(user.get(),app);
-		if(auth==null || !auth.checkAuthCodeEncoded(authCodeEncoded)){
+		if(auth==null || auth.getAccessToken() == null || !auth.getAccessToken().checkAccessTokenEncoded(accessTokenEncoded)){
+			logger.info("auth: {}",auth);
+			if (auth != null){
+				logger.info("auth.accessToken: {}",auth.getAccessToken());
+				if (auth.getAccessToken() != null){
+					logger.info("auth.accessToken.encoded: {}",auth.getAccessToken().getAccessTokenEncoded());
+				}
+			}
 			throw new ResponseStatusException(
 					HttpStatus.UNAUTHORIZED, "Unauthorized");
 		}

@@ -15,6 +15,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 @Controller
+@RequestMapping("/auth")
 public class AuthController {
 
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
@@ -31,7 +32,7 @@ public class AuthController {
 	@Autowired
 	AuthorisationRepository authRepo;
 
-	@RequestMapping( value= "/", method = RequestMethod.GET)
+	@GetMapping
 	public ModelAndView auth(
 			@RequestParam("client_id") String clientId,
 			@RequestParam("redirect_uri") String redirect,
@@ -51,7 +52,7 @@ public class AuthController {
 		return new ModelAndView("authorise","app",app);
 	}
 
-	@RequestMapping( value= "/", method = RequestMethod.POST)
+	@PostMapping
 	public ModelAndView postAuth(
 			@Valid AuthForm authForm,
 			@RequestParam("client_id") String clientId,
