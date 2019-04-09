@@ -15,18 +15,10 @@ import java.security.spec.KeySpec;
  */
 public class PBKDF2HashingStrategy implements HashingStrategy {
 
-	SecureRandom csprng;
-
-	public PBKDF2HashingStrategy(){
-		csprng = new SecureRandom();
-	}
-
 	@Override
 	public byte[] generateSalt(){
 		//NIST Reccomends 128 bits of salt for PBKDF2 (https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-132.pdf#page=10)
-		byte[] salt = new byte[128/8];
-		csprng.nextBytes(salt);
-		return salt;
+		return SecureUtils.randomBytes(128/8);
 	}
 
 	@Override

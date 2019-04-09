@@ -4,6 +4,7 @@ import ac.uk.shef.cc19grp10.auth.security.HashingStrategy;
 
 import javax.persistence.*;
 import java.security.MessageDigest;
+import java.util.List;
 
 @Entity
 public class Application {
@@ -12,6 +13,9 @@ public class Application {
     private Long id;
     private String name;
 	private String clientId;
+
+	@OneToMany(mappedBy="application")
+	private List<Authorisation> authorisations;
 
 	protected Application(){}
 
@@ -26,5 +30,9 @@ public class Application {
 
 	public String getClientId() {
 		return clientId;
+	}
+
+	public long getId() {
+		return id;
 	}
 }

@@ -4,6 +4,7 @@ import ac.uk.shef.cc19grp10.auth.security.HashingStrategy;
 
 import javax.persistence.*;
 import java.security.MessageDigest;
+import java.util.List;
 
 @Entity
 public class User {
@@ -16,6 +17,9 @@ public class User {
     private byte[] salt;
 	@Lob
 	private byte[] pwHash;
+
+	@OneToMany(mappedBy="user")
+	private List<Authorisation> authorisations;
 
 	protected User(){}
 

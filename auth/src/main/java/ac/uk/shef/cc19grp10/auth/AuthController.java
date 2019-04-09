@@ -1,26 +1,18 @@
 package ac.uk.shef.cc19grp10.auth;
 
-import ac.uk.shef.cc19grp10.auth.data.Application;
-import ac.uk.shef.cc19grp10.auth.data.ApplicationRepository;
-import ac.uk.shef.cc19grp10.auth.data.UserRepository;
-import ac.uk.shef.cc19grp10.auth.data.User;
+import ac.uk.shef.cc19grp10.auth.data.*;
 import ac.uk.shef.cc19grp10.auth.security.HashingStrategy;
-import ac.uk.shef.cc19grp10.auth.security.PBKDF2HashingStrategy;
-import org.hibernate.hql.internal.ast.SqlASTFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 @Controller
 public class AuthController {
@@ -36,23 +28,24 @@ public class AuthController {
 	@Autowired
 	ApplicationRepository appRepo;
 
+	@Autowired
+	AuthorisationRepository authRepo;
+
 	@RequestMapping( value= "/", method = RequestMethod.GET)
 	public ModelAndView auth(
 			@RequestParam("client_id") String clientId,
-			@RequestParam("redirect_uri") String redirectUri,
+			@RequestParam("redirect_uri") String redirect,
 			@RequestParam(name = "state", required=false) String state,
-			@SessionAttribute(name="user") User user)
-	{
+			@SessionAttribute(name="user") User user) throws URISyntaxException {
 		logger.info("User: {}", user);
 		Application app = appRepo.findByClientId(clientId);
 		if (app == null){
-			return new ModelAndView("misconfigured","reason","Bad client_id");
+			return misconfiguredClientId();
 		}
 
-		if (user == null){
-			RedirectView redirectView = new RedirectView("login");
-			redirectView.setPropagateQueryParams(true);
-			return new ModelAndView(redirectView);
+		Authorisation authorisation = authRepo.findByUserAndApplication(user,app);
+		if (authorisation != null){
+			return completeAuthorisationSuccess(user,app,redirect,state);
 		}
 
 		return new ModelAndView("authorise","app",app);
@@ -65,26 +58,46 @@ public class AuthController {
 			@RequestParam("redirect_uri") String redirect,
 			@RequestParam(name = "state", required=false) String state,
 			@SessionAttribute(name="user") User user) throws URISyntaxException {
-		logger.info("User: {}", user);
 		Application app = appRepo.findByClientId(clientId);
 		if (app == null){
-			return new ModelAndView("misconfigured","reason","Bad client_id");
+			return misconfiguredClientId();
 		}
 
-		logger.info("authForm: {}", authForm.accept);
-		String authParams;
 		if(authForm.accept!=null&&authForm.accept.equals("yes")){
-			String auth_code = "success";//TODO: use a real auth code
-			authParams = "code="+auth_code;
-			if (state != null){
-				authParams += "&state=" + state;
-			}
+			return completeAuthorisationSuccess(user,app,redirect,state);
 		}else if(authForm.accept!=null&&authForm.accept.equals("no")){
-			authParams = "error=access_denied";
+			return completeAuthorisationDenied(redirect,state);
 		}else{
 			return new ModelAndView("authorise","error","You must select either yes or no.");
 		}
+	}
 
+	private ModelAndView misconfiguredClientId() throws URISyntaxException {
+		return new ModelAndView("misconfigured","reason","Bad client_id");
+	}
+
+	private ModelAndView completeAuthorisationDenied(String redirect, String state) throws URISyntaxException {
+		String authParams = "error=access_denied";
+		if (state != null){
+			authParams += "&state=" + state;
+		}
+		return completeAuthorisation(redirect,authParams);
+	}
+
+	private ModelAndView completeAuthorisationSuccess(User user, Application application, String redirect, String state) throws URISyntaxException {
+		Authorisation authorisation = authRepo.save(new Authorisation(user,application));
+		return completeAuthorisationSuccess(authorisation,redirect,state);
+	}
+	private ModelAndView completeAuthorisationSuccess(Authorisation authorisation, String redirect, String state) throws URISyntaxException {
+		byte[] authCode = authorisation.getAuthCode();
+		String authParams = "code="+java.util.Base64.getEncoder().encodeToString(authCode);
+		if (state != null){
+			authParams += "&state=" + state;
+		}
+		return completeAuthorisation(redirect,authParams);
+	}
+
+	private ModelAndView completeAuthorisation(String redirect,String authParams) throws URISyntaxException {
 		URI redirectUri = new URI(redirect);
 		if (redirectUri.getQuery()!=null&&redirectUri.getQuery().isEmpty()){
 			redirect += "&";
