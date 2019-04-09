@@ -4,6 +4,7 @@ import ac.uk.shef.cc19grp10.auth.security.SecureUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Base64;
 
 /**
  * <Doc here>
@@ -36,6 +37,14 @@ public class Authorisation {
 
 	public byte[] getAuthCode() {
 		return authCode;
+	}
+
+	public String getAuthCodeEncoded() {
+		return Base64.getUrlEncoder().encodeToString(authCode);
+	}
+
+	public boolean checkAuthCodeEncoded(String authCodeEncoded) {
+		return SecureUtils.bytesEqual(authCode, Base64.getUrlDecoder().decode(authCodeEncoded));
 	}
 }
 

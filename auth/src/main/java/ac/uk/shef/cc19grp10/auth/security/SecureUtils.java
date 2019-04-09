@@ -1,5 +1,6 @@
 package ac.uk.shef.cc19grp10.auth.security;
 
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 
 /**
@@ -14,5 +15,11 @@ public class SecureUtils {
 		byte[] salt = new byte[length];
 		csprng.nextBytes(salt);
 		return salt;
+	}
+
+	public static boolean bytesEqual(byte[] a, byte[] b) {
+		//MessageDigest.isEqual does constant time comparison
+		//not strictly necessary, but good to be cautious
+		return MessageDigest.isEqual(a,b);
 	}
 }

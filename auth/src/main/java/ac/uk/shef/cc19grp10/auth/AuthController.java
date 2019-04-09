@@ -89,8 +89,7 @@ public class AuthController {
 		return completeAuthorisationSuccess(authorisation,redirect,state);
 	}
 	private ModelAndView completeAuthorisationSuccess(Authorisation authorisation, String redirect, String state) throws URISyntaxException {
-		byte[] authCode = authorisation.getAuthCode();
-		String authParams = "code="+java.util.Base64.getEncoder().encodeToString(authCode);
+		String authParams = "code="+authorisation.getAuthCodeEncoded();;
 		if (state != null){
 			authParams += "&state=" + state;
 		}
@@ -99,10 +98,10 @@ public class AuthController {
 
 	private ModelAndView completeAuthorisation(String redirect,String authParams) throws URISyntaxException {
 		URI redirectUri = new URI(redirect);
-		if (redirectUri.getQuery()!=null&&redirectUri.getQuery().isEmpty()){
-			redirect += "&";
-		}else{
+		if (redirectUri.getQuery()==null||redirectUri.getQuery().isEmpty()){
 			redirect += "?";
+		}else{
+			redirect += "&";
 		}
 		redirect += authParams;
 		return new ModelAndView("redirect:"+redirect);

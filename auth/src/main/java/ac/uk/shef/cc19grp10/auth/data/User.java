@@ -1,6 +1,8 @@
 package ac.uk.shef.cc19grp10.auth.data;
 
 import ac.uk.shef.cc19grp10.auth.security.HashingStrategy;
+import ac.uk.shef.cc19grp10.auth.security.SecureUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.security.MessageDigest;
@@ -31,10 +33,12 @@ public class User {
 		return name;
 	}
 
+	@JsonIgnore
 	public byte[] getSalt() {
 		return salt;
 	}
 
+	@JsonIgnore
 	public byte[] getPwHash() {
 		return pwHash;
 	}
@@ -47,9 +51,7 @@ public class User {
 
 	public boolean passwordMatches(String password, HashingStrategy hashingStrategy){
 		byte[] inputHash = hashingStrategy.hash(password,this.salt);
-		//MessageDigest.isEqual does constant time comparison
-		//not strictly necessary, but good to be cautious
-		return MessageDigest.isEqual(inputHash,this.pwHash);
+		return SecureUtils.bytesEqual(inputHash,pwHash);
 	}
 
 }
