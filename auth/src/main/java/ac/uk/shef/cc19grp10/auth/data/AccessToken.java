@@ -26,7 +26,7 @@ public class AccessToken {
 	private byte[] accessToken;
 
 	@JsonIgnore
-	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "accessToken")
+	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "accessToken", optional = false)
 	private Authorisation authorisation;
 
 	public AccessToken(){}
@@ -61,5 +61,9 @@ public class AccessToken {
 	public long getExpiresIn(){
 		long expiry = expires.getTime() - new Date().getTime();
 		return expiry < 0 ? 0 : expiry ;
+	}
+
+	public Authorisation getAuthorisation() {
+		return authorisation;
 	}
 }

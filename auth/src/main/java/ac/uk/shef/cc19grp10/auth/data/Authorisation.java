@@ -18,12 +18,12 @@ public class Authorisation {
 	private byte[] authCode;
 
 	@Id
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL, optional = false)
 	@JoinColumn(name="userId", referencedColumnName="Id")
 	private User user;
 
 	@Id
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL, optional = false)
 	@JoinColumn(name="applicationId", referencedColumnName="Id")
 	private Application application;
 
@@ -60,6 +60,10 @@ public class Authorisation {
 
 	public void setAccessToken(AccessToken accessToken) {
 		this.accessToken = accessToken;
+	}
+
+	public User getUser() {
+		return user;
 	}
 }
 
