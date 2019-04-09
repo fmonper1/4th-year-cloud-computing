@@ -34,7 +34,7 @@
                         <form:input class="form-control" path="password" type="password" placeholder="Password"/>
                     </div>
                     <input type="submit" value="Login" class="btn btn-primary btn-block"/>
-                    <a href="/signup" class="btn btn-primary btn-block" data-keep-params>Sign up</a>
+                    <a href="signup" class="btn btn-primary btn-block" data-keep-params>Sign up</a>
                 </form:form>
             </div>
         </div>

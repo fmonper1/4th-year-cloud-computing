@@ -24,7 +24,7 @@ subprojects{
 
     processResources {
         filesMatching("application.properties") {
-            expand(artifact: "${project.name}-${project.version}")
+            expand(artifact: "${this.archivesBaseName}")
         }
     }
 
@@ -46,6 +46,7 @@ subprojects{
         providedClasspath = providedClasspath.filter { File file ->
             !file.name.endsWith( ('jar') )
         }
+        archiveFileName = "${archiveBaseName.get()}.${archiveExtension.get()}"
     }
 
     task copyToLib(type: Copy) {
