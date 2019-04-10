@@ -9,12 +9,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 /**
  * <Doc here>
@@ -38,6 +43,7 @@ public class LoginController {
 
 	@GetMapping
 	public ModelAndView login(
+			@ModelAttribute LoginForm loginForm,
 			@RequestParam("client_id") String clientId)
 	{
 		logger.info("Login get query");
@@ -46,12 +52,13 @@ public class LoginController {
 			return new ModelAndView("misconfigured","reason","Bad client_id");
 		}
 
-		return new ModelAndView("login","loginForm", new LoginForm());
+		return new ModelAndView("login");
 	}
 
 	@PostMapping
 	public ModelAndView postLogin(
-			@Valid LoginForm loginForm,
+			@ModelAttribute @Valid LoginForm loginForm,
+			BindingResult bindingResult,
 			@RequestParam("client_id") String clientId,
 			HttpServletRequest request)
 	{
@@ -59,6 +66,10 @@ public class LoginController {
 		Application app = appRepo.findByClientId(clientId);
 		if (app == null){
 			return new ModelAndView("misconfigured","reason","Bad client_id");
+		}
+
+		if(bindingResult.hasErrors()){
+			return new ModelAndView("login");
 		}
 
 		User user = userRepo.findByName(loginForm.username);
@@ -73,11 +84,17 @@ public class LoginController {
 			return new ModelAndView(redirectView);
 		}else{
 			logger.info("Incorrect Username or password");
-			return new ModelAndView("login","error","Incorrect Username or password");
+			bindingResult.addError(new ObjectError("signupForm","Incorrect Username or password"));
+			return new ModelAndView("login");
 		}
 	}
 
 	public class LoginForm {
+		@NotBlank
+		String username;
+		@Size(min = 3, max=255)
+		String password;
+
 		public String getUsername() {
 			return username;
 		}
@@ -93,8 +110,5 @@ public class LoginController {
 		public void setPassword(String password) {
 			this.password = password;
 		}
-
-		String username;
-		String password;
 	}
 }

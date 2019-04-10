@@ -5,16 +5,30 @@ import ac.uk.shef.cc19grp10.auth.data.ApplicationRepository;
 import ac.uk.shef.cc19grp10.auth.data.User;
 import ac.uk.shef.cc19grp10.auth.data.UserRepository;
 import ac.uk.shef.cc19grp10.auth.security.HashingStrategy;
+import ac.uk.shef.cc19grp10.auth.validation.FieldsMatch;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.io.JsonStringEncoder;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hibernate.validator.constraints.ScriptAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,30 +60,21 @@ public class SignupController {
 
 	@PostMapping
 	public ModelAndView postSignup(
-			@Valid SignupForm signupForm,
-			@RequestParam("client_id") String clientId,
-			HttpServletRequest request)
-	{
+			@ModelAttribute("signupForm") @Valid SignupForm signupForm,
+			BindingResult bindingResult,
+			HttpServletRequest request) throws JsonProcessingException {
 		logger.info("Signup post query");
-		Application app = appRepo.findByClientId(clientId);
-		if (app == null){
-			return new ModelAndView("misconfigured","reason","Bad client_id");
-		}
+		logger.info(new ObjectMapper().writeValueAsString(signupForm));
 
 		User existingUser = userRepo.findByName(signupForm.username);
 
 		if(existingUser!=null){
-			Map<String,Object> args = new HashMap<>();
-			args.put("signupForm",signupForm);
-			args.put("error","Username is not available");
-			return new ModelAndView("signup", args);
+			bindingResult.addError(new FieldError("signupForm","username","Username is not available"));
+			return new ModelAndView("signup");
 		}
 
-		if(!signupForm.confirmPassword.equals(signupForm.password)){
-			Map<String,Object> args = new HashMap<>();
-			args.put("signupForm",signupForm);
-			args.put("error","Passwords do not match");
-			return new ModelAndView("signup", args);
+		if(bindingResult.hasErrors()){
+			return new ModelAndView("signup");
 		}
 
 		User user = userRepo.save(new User(signupForm.username,signupForm.password,hashingStrategy));
@@ -80,33 +85,35 @@ public class SignupController {
 		return new ModelAndView(redirectView);
 	}
 
+	@FieldsMatch({"password","confirmPassword"})
 	public class SignupForm {
+		@NotBlank
+		String username;
+		@Size(min = 3, max=255)
+		String password;
+		@Size(min = 3, max=255)
+		String confirmPassword;
+
 		public String getUsername() {
 			return username;
+		}
+		public String getPassword() {
+			return password;
+		}
+		public String getConfirmPassword() {
+			return confirmPassword;
 		}
 
 		public void setUsername(String username) {
 			this.username = username;
 		}
 
-		public String getPassword() {
-			return password;
-		}
-
 		public void setPassword(String password) {
 			this.password = password;
-		}
-
-		public String getConfirmPassword() {
-			return confirmPassword;
 		}
 
 		public void setConfirmPassword(String confirmPassword) {
 			this.confirmPassword = confirmPassword;
 		}
-
-		String username;
-		String password;
-		String confirmPassword;
 	}
 }
