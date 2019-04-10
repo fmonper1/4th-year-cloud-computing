@@ -41,6 +41,10 @@ public class VerifyController {
 			throw new ResponseStatusException(
 					HttpStatus.UNAUTHORIZED, "Unauthorized");
 		}
+		if(!auth.getApplication().equals(app)){
+			throw new ResponseStatusException(
+					HttpStatus.UNAUTHORIZED, "Unauthorized");
+		}
 		return auth.getUser();
 	}
 }

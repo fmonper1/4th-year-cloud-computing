@@ -9,7 +9,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="my" %>
+<%@ taglib prefix="my" uri="http://utils.cc19grp10.shef.ac.uk/tags"%>
 <html>
 <head>
     <title>Login</title>

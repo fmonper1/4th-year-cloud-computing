@@ -7,4 +7,4 @@ rootProject.name = 'cloud'
 include 'demo'
 include 'auth'
 include 'dashboard'
-
+include 'utils'
