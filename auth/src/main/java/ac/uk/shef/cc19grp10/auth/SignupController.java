@@ -62,7 +62,8 @@ public class SignupController {
 	public ModelAndView postSignup(
 			@ModelAttribute("signupForm") @Valid SignupForm signupForm,
 			BindingResult bindingResult,
-			HttpServletRequest request) throws JsonProcessingException {
+			HttpServletRequest request,
+			@SessionAttribute(required = false) String loginRedirect) throws JsonProcessingException {
 		logger.info("Signup post query");
 		logger.info(new ObjectMapper().writeValueAsString(signupForm));
 
@@ -78,9 +79,14 @@ public class SignupController {
 		}
 
 		User user = userRepo.save(new User(signupForm.username,signupForm.password,hashingStrategy));
-		request.getSession().setAttribute("user", user);
+		request.getSession().setAttribute("userId", user.getId());
 
-		RedirectView redirectView = new RedirectView("/auth");
+		//redirect to auth by default
+		loginRedirect = loginRedirect==null?"/auth":loginRedirect;
+		//remove redirect if set
+		request.getSession().removeAttribute("loginRedirect");
+
+		RedirectView redirectView = new RedirectView(loginRedirect);
 		redirectView.setPropagateQueryParams(true);
 		return new ModelAndView(redirectView);
 	}

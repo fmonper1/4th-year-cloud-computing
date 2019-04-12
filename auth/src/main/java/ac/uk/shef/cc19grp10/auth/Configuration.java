@@ -19,9 +19,15 @@ public class Configuration implements WebMvcConfigurer {
 		return new PBKDF2HashingStrategy();
 	}
 
+	@Bean
+	LoadUserInterceptor loadUserInterceptorBean() {
+		return new LoadUserInterceptor();
+	}
+
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/auth");
+		registry.addInterceptor(loadUserInterceptorBean());
+		registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/auth","/developer/**");
 	}
 
 	@Override

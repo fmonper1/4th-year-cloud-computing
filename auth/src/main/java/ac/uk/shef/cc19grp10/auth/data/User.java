@@ -17,10 +17,17 @@ public class User {
     @Column(unique = true)
     private String name;
     @Lob
+	@JsonIgnore
     private byte[] salt;
 	@Lob
+	@JsonIgnore
 	private byte[] pwHash;
 
+	@JsonIgnore
+	@OneToOne(fetch = FetchType.LAZY, mappedBy = "owner")
+	private Application application;
+
+	@JsonIgnore
 	@OneToMany(mappedBy="user")
 	private List<Authorisation> authorisations;
 
@@ -55,4 +62,11 @@ public class User {
 		return SecureUtils.bytesEqual(inputHash,pwHash);
 	}
 
+	public boolean hasApplication() {
+		return application != null;
+	}
+
+	public Application getApplication() {
+		return application;
+	}
 }

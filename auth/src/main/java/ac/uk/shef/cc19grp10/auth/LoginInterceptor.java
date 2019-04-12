@@ -25,11 +25,14 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 							  Object handler) throws Exception {
 		User user = (User) request.getSession()
 				.getAttribute("user");
-
-		logger.info("User: {}", user);
-		logger.info("ServletPath: {}", request.getServletPath());
 		if (user == null) {
-			response.sendRedirect(request.getContextPath() + "/login?" + request.getQueryString());
+			String queryString = "";
+			if(request.getQueryString()!=null){
+				queryString = "?"+request.getQueryString();
+			}
+			String redirectTo = request.getRequestURI() + queryString;
+			request.getSession().setAttribute("loginRedirect",redirectTo);
+			response.sendRedirect(request.getContextPath() + "/login");
 			return false;
 		}
 

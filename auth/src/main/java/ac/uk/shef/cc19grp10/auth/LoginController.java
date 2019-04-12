@@ -43,14 +43,10 @@ public class LoginController {
 
 	@GetMapping
 	public ModelAndView login(
-			@ModelAttribute LoginForm loginForm,
-			@RequestParam("client_id") String clientId)
+			@ModelAttribute LoginForm loginForm
+	)
 	{
 		logger.info("Login get query");
-		Application app = appRepo.findByClientId(clientId);
-		if (app == null){
-			return new ModelAndView("misconfigured","reason","Bad client_id");
-		}
 
 		return new ModelAndView("login");
 	}
@@ -59,15 +55,11 @@ public class LoginController {
 	public ModelAndView postLogin(
 			@ModelAttribute @Valid LoginForm loginForm,
 			BindingResult bindingResult,
-			@RequestParam("client_id") String clientId,
-			HttpServletRequest request)
+			HttpServletRequest request,
+			@SessionAttribute(required = false) String loginRedirect
+	)
 	{
 		logger.info("Login post query");
-		Application app = appRepo.findByClientId(clientId);
-		if (app == null){
-			return new ModelAndView("misconfigured","reason","Bad client_id");
-		}
-
 		if(bindingResult.hasErrors()){
 			return new ModelAndView("login");
 		}
@@ -75,12 +67,13 @@ public class LoginController {
 		User user = userRepo.findByName(loginForm.username);
 
 		if(user!=null&&user.passwordMatches(loginForm.password,hashingStrategy)){
+			//redirect to auth by default
+			loginRedirect = loginRedirect==null?"/auth":loginRedirect;
+			//remove redirect if set
+			request.getSession().removeAttribute("loginRedirect");
 
-			RedirectView redirectView = new RedirectView("auth");
-			redirectView.setPropagateQueryParams(true);
-			logger.info("user being set to: {} \n",user.toString());
-
-			request.getSession().setAttribute("user", user);
+			RedirectView redirectView = new RedirectView(loginRedirect);
+			request.getSession().setAttribute("userId", user.getId());
 			return new ModelAndView(redirectView);
 		}else{
 			logger.info("Incorrect Username or password");

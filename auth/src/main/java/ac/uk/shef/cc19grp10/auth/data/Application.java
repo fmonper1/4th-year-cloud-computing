@@ -13,8 +13,14 @@ public class Application {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
     private String name;
+	@Column(unique = true)
 	private String clientId;
+	private String redirectUri;
+
+	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE}, optional = false)
+	private User owner;
 
 	@Lob
 	private byte[] clientSecret;
@@ -24,10 +30,12 @@ public class Application {
 
 	protected Application(){}
 
-	public Application(String name, String clientId){
+	public Application(String name, String clientId, User owner, String redirectUri){
 		this.name = name;
 		this.clientId = clientId;
+		this.owner = owner;
 		this.clientSecret = SecureUtils.randomBytes(32);
+		this.redirectUri = redirectUri;
 	}
 
 	public String getName() {
@@ -38,7 +46,7 @@ public class Application {
 		return clientId;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -48,5 +56,13 @@ public class Application {
 
 	public String getEncodedClientSecret() {
 		return Base64.getUrlEncoder().encodeToString(clientSecret);
+	}
+
+	public String getRedirectUri() {
+		return redirectUri;
+	}
+
+	public User getOwner() {
+		return owner;
 	}
 }
