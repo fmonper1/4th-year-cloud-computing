@@ -17,6 +17,10 @@ public class Application {
     private String name;
 	@Column(unique = true)
 	private String clientId;
+	@Column(unique = true)
+	private String dbUsername;
+	@Column(unique = true)
+	private String schemaName;
 	private String redirectUri;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE}, optional = false)
@@ -30,9 +34,11 @@ public class Application {
 
 	protected Application(){}
 
-	public Application(String name, String clientId, User owner, String redirectUri){
+	public Application(String name, String clientId, String dbUsername, String schemaName, User owner, String redirectUri){
 		this.name = name;
 		this.clientId = clientId;
+		this.dbUsername = dbUsername;
+		this.schemaName = schemaName;
 		this.owner = owner;
 		this.clientSecret = SecureUtils.randomBytes(32);
 		this.redirectUri = redirectUri;
@@ -64,5 +70,17 @@ public class Application {
 
 	public User getOwner() {
 		return owner;
+	}
+
+	public String getDbUsername() {
+		return dbUsername;
+	}
+
+	public String getSchemaName() {
+		return schemaName;
+	}
+
+	public String getDbUrl() {
+		return "jdbc:mysql://localhost/"+schemaName+"?useUnicode=true&characterEncoding=UTF-8";
 	}
 }

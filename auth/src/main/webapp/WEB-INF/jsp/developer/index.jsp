@@ -37,6 +37,12 @@
                             <tr>
                                 <td>Redirect Uri:</td><td>${application.redirectUri}</td>
                             </tr>
+                            <tr>
+                                <td>Database username:</td><td>${application.dbUsername}</td>
+                            </tr>
+                            <tr>
+                                <td>Database url:</td><td>${application.dbUrl}</td>
+                            </tr>
                         </table>
                     </c:when>
                     <c:otherwise>

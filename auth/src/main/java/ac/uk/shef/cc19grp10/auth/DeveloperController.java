@@ -3,9 +3,8 @@ package ac.uk.shef.cc19grp10.auth;
 import ac.uk.shef.cc19grp10.auth.data.Application;
 import ac.uk.shef.cc19grp10.auth.data.ApplicationRepository;
 import ac.uk.shef.cc19grp10.auth.data.User;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.io.JsonStringEncoder;
-import jdk.nashorn.internal.ir.debug.JSONWriter;
+import ac.uk.shef.cc19grp10.auth.services.ApplicationManagement;
+import ac.uk.shef.cc19grp10.auth.validation.FieldsMatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +32,9 @@ import java.text.Normalizer;
 public class DeveloperController {
 
 	@Autowired
+	ApplicationManagement appManagement;
+
+	@Autowired
 	ApplicationRepository appRepo;
 
 	Logger logger = LoggerFactory.getLogger(DeveloperController.class);
@@ -56,13 +58,12 @@ public class DeveloperController {
 	@PostMapping("/create")
 	public ModelAndView createApplication(
 			@ModelAttribute @Valid CreateApplicationForm createApplicationForm,
-			@SessionAttribute User user,
-			HttpServletRequest request,
-			BindingResult bindingResult
+			BindingResult bindingResult,
+			@SessionAttribute User user
 	)
 	{
 		if(user.hasApplication()){
-			//It's not actually that the name is in use, but the client id, but they don't need to know that.
+			//This is mostly just laziness to be honest
 			bindingResult.addError(new ObjectError(
 					"createApplicationForm",
 					"You already have an application. Please edit that one."
@@ -72,20 +73,21 @@ public class DeveloperController {
 		if(bindingResult.hasErrors()){
 			return new ModelAndView("developer/create");
 		}
-		String redirectUri = createApplicationForm.redirectUri;
-		String applicationName = createApplicationForm.applicationName;
-		String clientId = nameToClientId(applicationName);
-		Application existingApplication = appRepo.findByClientId(clientId);
-		if(existingApplication != null){
-			//It's not actually that the name is in use, but the client id, but they don't need to know that.
+		try {
+			appManagement.createApplication(
+					createApplicationForm.redirectUri,
+					createApplicationForm.applicationName,
+					user,
+					createApplicationForm.databasePassword
+			);
+		} catch (ApplicationManagement.ApplicationExistsError applicationExistsError) {
 			bindingResult.addError(new FieldError(
 					"createApplicationForm",
 					"applicationName",
-					"Another application is already using that name"
+					"An application with that name already exists."
 			));
 			return new ModelAndView("developer/create");
 		}
-		Application app = appRepo.save(new Application(applicationName,clientId, user, redirectUri));
 		return new ModelAndView(new RedirectView("/developer"));
 	}
 
@@ -106,11 +108,16 @@ public class DeveloperController {
 				.toLowerCase();
 	}
 
+	@FieldsMatch({"databasePassword","confirmDatabasePassword"})
 	public class CreateApplicationForm{
 		@Size(min=5)
 		String applicationName;
 		@NotBlank
 		String redirectUri;
+		@Size(min=3)
+		String databasePassword;
+		@Size(min=3)
+		String confirmDatabasePassword;
 
 		public String getApplicationName() {
 			return applicationName;
@@ -126,6 +133,22 @@ public class DeveloperController {
 
 		public void setRedirectUri(String redirectUri) {
 			this.redirectUri = redirectUri;
+		}
+
+		public String getDatabasePassword() {
+			return databasePassword;
+		}
+
+		public void setDatabasePassword(String databasePassword) {
+			this.databasePassword = databasePassword;
+		}
+
+		public String getConfirmDatabasePassword() {
+			return confirmDatabasePassword;
+		}
+
+		public void setConfirmDatabasePassword(String confirmDatabasePassword) {
+			this.confirmDatabasePassword = confirmDatabasePassword;
 		}
 	}
 }
