@@ -3,8 +3,6 @@ package ac.uk.shef.cc19grp10.auth;
 import ac.uk.shef.cc19grp10.auth.data.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;

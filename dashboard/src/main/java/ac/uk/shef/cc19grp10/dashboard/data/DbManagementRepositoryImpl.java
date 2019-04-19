@@ -1,10 +1,8 @@
-package ac.uk.shef.cc19grp10.auth.data;
+package ac.uk.shef.cc19grp10.dashboard.data;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.PreparedStatement;
 

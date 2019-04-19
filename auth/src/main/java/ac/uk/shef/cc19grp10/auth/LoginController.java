@@ -1,6 +1,5 @@
 package ac.uk.shef.cc19grp10.auth;
 
-import ac.uk.shef.cc19grp10.auth.data.Application;
 import ac.uk.shef.cc19grp10.auth.data.ApplicationRepository;
 import ac.uk.shef.cc19grp10.auth.data.User;
 import ac.uk.shef.cc19grp10.auth.data.UserRepository;
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
