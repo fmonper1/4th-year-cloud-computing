@@ -1,5 +1,5 @@
 <body>
-<h2>Submitted Listing Information</h2>
+<h2>Viewing Listing Information</h2>
 <table>
     <tr>
         <td>Title :</td>
@@ -12,6 +12,10 @@
     <tr>
         <td>id :</td>
         <td>${id}</td>
+    </tr>
+    <tr>
+        <td><a href="./update">Edit</a> </td>
+        <td><a href="./delete">Delete</a> </td>
     </tr>
 </table>
 </body>
