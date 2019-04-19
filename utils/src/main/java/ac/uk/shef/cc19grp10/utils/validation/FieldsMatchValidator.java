@@ -1,13 +1,14 @@
-package ac.uk.shef.cc19grp10.auth.validation;
+package ac.uk.shef.cc19grp10.utils.validation;
 
-import ac.uk.shef.cc19grp10.auth.AuthController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
  */
 public class FieldsMatchValidator implements ConstraintValidator<FieldsMatch, Object> {
 	private String[] fields;
-	private static Logger logger = LoggerFactory.getLogger(AuthController.class);;
+	private static Logger logger = LoggerFactory.getLogger(FieldsMatchValidator.class);
 
 	@Override
 	public void initialize(FieldsMatch constraintAnnotation) {
