@@ -12,5 +12,5 @@ public interface UserFactory {
 	 * Whatever object type is returns from here you can then access using @SessionAttribute("User")
 	 * i.e.
 	 */
-	Object loadOrCreateUser(long id, String name);
+	Object loadOrCreateUser(long id, String name, String accessToken);
 }

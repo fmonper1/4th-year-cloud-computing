@@ -33,7 +33,7 @@ import java.util.HashMap;
 @Component
 @Controller
 @RequestMapping("/auth/callback")
-@ConditionalOnProperty("auth")
+@ConditionalOnProperty(prefix= "auth.", name="client_id")
 public class AuthCallbackController {
 
 	private final RestTemplate restTemplate;
@@ -100,7 +100,7 @@ public class AuthCallbackController {
 			if (userResponse == null) {
 				return "AuthError";
 			}
-			Object user = userFactory.loadOrCreateUser(userResponse.id, userResponse.name);
+			Object user = userFactory.loadOrCreateUser(userResponse.id, userResponse.name, tokenResponse.accessToken);
 			logger.info("Setting user to: {}",user);
 			request.getSession().setAttribute("user",user);
 		}
@@ -116,7 +116,7 @@ public class AuthCallbackController {
 
 
 	public static class TokenResponse{
-		@JsonProperty("access_token")
+		@JsonProperty(value = "access_token",required = true)
 		public String accessToken;
 		@JsonProperty("expires")
 		public int expires;
@@ -127,9 +127,9 @@ public class AuthCallbackController {
 	}
 
 	public static class UserResponse {
-		@JsonProperty("name")
+		@JsonProperty(value = "name",required = true)
 		public String name;
-		@JsonProperty("id")
+		@JsonProperty(value = "id",required = true)
 		public long id;
 
 		public UserResponse(){}
