@@ -1,9 +1,11 @@
 package hello.models;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
-@Entity // This tells Hibernate to make a table out of this class
-@Table(name = "listings")
+@Entity(name = "Listing") // This tells Hibernate to make a table out of this class
+@Table(name = "LISTING")
 public class Listing {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,8 +15,14 @@ public class Listing {
 
 	private String description;
 
+	@OneToMany(mappedBy = "listing", cascade = CascadeType.ALL)
+
+	private List<Comment> comments = new ArrayList<>();
+
+
+
 	@ManyToOne
-	@JoinColumn(name = "fk_creator")
+	@JoinColumn(name="user_id", nullable=false)
 	private User user;
 
 	public Integer getId() {
@@ -48,4 +56,8 @@ public class Listing {
 		this.description = description;
 	}
 
+
+	public void setUser(User user) {
+		this.user = user;
+	}
 }

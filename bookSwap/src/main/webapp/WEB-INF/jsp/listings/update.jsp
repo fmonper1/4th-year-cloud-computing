@@ -3,10 +3,14 @@
 <head>
 </head>
 <body>
-<h3>Add a new listing</h3>
+<h3>Update a listing</h3>
 <form:form method="POST"
            action="./update" modelAttribute="listing">
     <table>
+        <tr>
+            <td><form:label path="id">id</form:label></td>
+            <td><form:input path="id" disabled=""/></td>
+        </tr>
         <tr>
             <td><form:label path="title">Title</form:label></td>
             <td><form:input path="title"/></td>

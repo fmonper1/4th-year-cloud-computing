@@ -1,25 +1,32 @@
 package hello.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
-@Entity // This tells Hibernate to make a table out of this class
+@Entity(name = "User") // This tells Hibernate to make a table out of this class
+@Table(name = "USER")
 public class User {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Integer id;
+	private Long id;
 
     private String name;
 
     private String email;
 
-	public Integer getId() {
+    public User() {};
+
+	public User(String name, String email) {
+		this.name = name;
+		this.email = email;
+	}
+
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -39,5 +46,14 @@ public class User {
 		this.email = email;
 	}
 
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private Set<Listing> listings;
 
+	public Set<Listing> getListings() {
+		return listings;
+	}
+
+	public void setListings(Set<Listing> listings) {
+		this.listings = listings;
+	}
 }

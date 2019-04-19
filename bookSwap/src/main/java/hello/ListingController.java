@@ -26,7 +26,6 @@ public class ListingController	 {
 
 	private final Logger logger = LoggerFactory.getLogger(ListingController.class);
 
-
 	/**
 	This route is used to view the details for a listing
 	 */
@@ -37,9 +36,12 @@ public class ListingController	 {
 		model.addAttribute("title", listing.getTitle());
 		model.addAttribute("description", listing.getDescription());
 		model.addAttribute("id", listing.getId());
-		return new ModelAndView("listings/add-success","listing", model);
+		return new ModelAndView("listings/view","listing", model);
 	}
 
+    /**
+     GET - This route is used to view the form to update a listing
+     */
 	@RequestMapping(path = "/{id}/update", method = RequestMethod.GET)
 	public ModelAndView updateListing(@PathVariable(value="id")Integer id, ModelMap model) {
 		Listing listing = listingRepository.findById(id).orElse(null);
@@ -60,9 +62,9 @@ public class ListingController	 {
 	}
 
 	@RequestMapping(path="/add", method = RequestMethod.GET) // Map ONLY GET Requests
-	public ModelAndView showForm() {
-		return new ModelAndView("listings/add", "listing", new Listing());
-	}
+    public ModelAndView showForm() {
+        return new ModelAndView("listings/add", "listing", new Listing());
+    }
 
 	@RequestMapping(path="/add", method = RequestMethod.POST) // Map ONLY GET Requests
 	public String submit(@Valid @ModelAttribute("listing")Listing listing,
@@ -77,8 +79,14 @@ public class ListingController	 {
 		model.addAttribute("title", listing.getTitle());
 		model.addAttribute("description", listing.getDescription());
 		model.addAttribute("id", listing.getId());
-		return "listings/add-success";
+		return "listings/view";
 	}
+
+    @GetMapping("/{id}/delete")
+    public String deleteCustomer(@PathVariable(value="id")Integer id) {
+        listingRepository.deleteById(id);
+        return "redirect:/user/listings";
+    }
 
 	@GetMapping(path="/all")
 	public @ResponseBody Iterable<Listing> getAllListings() {
