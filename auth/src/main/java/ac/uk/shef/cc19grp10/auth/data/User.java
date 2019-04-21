@@ -5,7 +5,6 @@ import ac.uk.shef.cc19grp10.auth.security.SecureUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.security.MessageDigest;
 import java.util.List;
 
 @Entity
