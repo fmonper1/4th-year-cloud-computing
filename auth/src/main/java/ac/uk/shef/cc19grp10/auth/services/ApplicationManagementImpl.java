@@ -39,9 +39,9 @@ public class ApplicationManagementImpl implements ApplicationManagement {
 		//unicode normalise
 		return "app_"+Normalizer.normalize(applicationName, Normalizer.Form.NFD)
 				//replace space with dash
-				.replaceAll("\\p{Space}","-")
+				.replaceAll("\\p{Space}","_")
 				//remove non alphanumeric/dash characters
-				.replaceAll("[^\\p{Alnum}-]", "")
+				.replaceAll("[^\\p{Alnum}_]", "")
 				//and lowercase it
 				.toLowerCase();
 	}

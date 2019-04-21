@@ -1,9 +1,6 @@
-package ac.uk.shef.cc19grp10.auth;
+package ac.uk.shef.cc19grp10.dashboard;
 
-import ac.uk.shef.cc19grp10.dashboard.data.Application;
-import ac.uk.shef.cc19grp10.dashboard.data.ApplicationRepository;
-import ac.uk.shef.cc19grp10.dashboard.data.AuthApplication;
-import ac.uk.shef.cc19grp10.dashboard.data.User;
+import ac.uk.shef.cc19grp10.dashboard.data.*;
 import ac.uk.shef.cc19grp10.dashboard.services.ApplicationManagementService;
 import ac.uk.shef.cc19grp10.utils.validation.FieldsMatch;
 import org.slf4j.Logger;
@@ -13,11 +10,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -42,9 +41,14 @@ public class DeveloperController {
 			@SessionAttribute("user") User user
 	) throws ApplicationManagementService.ApiError {
 
-		//TODO: handle ApiError properly
-		AuthApplication authApp = appManagement.getAuthApplication(user);
 		Application app = user.getApplication();
+		AuthApplication authApp = null;
+		DbApplication dbApp = null;
+		if(app != null) {
+			dbApp = app.getDbApplication();
+			//TODO: handle ApiError properly
+			authApp = appManagement.getAuthApplication(user);
+		}
 
 		logger.info("app from user: {}",app);
 		
@@ -54,7 +58,24 @@ public class DeveloperController {
 
 		return new ModelAndView("developer/index")
 				.addObject("app",app)
-				.addObject("authApp",authApp);
+				.addObject("authApp",authApp)
+				.addObject("dbApp",dbApp);
+	}
+
+	@GetMapping("/upload")
+	public ModelAndView createApplication(
+			@ModelAttribute CreateDeploymentForm createDeploymentForm
+	)
+	{
+		return new ModelAndView("developer/upload");
+	}
+
+	@GetMapping("/create")
+	public ModelAndView createApplication(
+			@ModelAttribute CreateApplicationForm createApplicationForm
+	)
+	{
+		return new ModelAndView("developer/create");
 	}
 
 	@GetMapping("/auth/create")
@@ -73,6 +94,53 @@ public class DeveloperController {
 		return new ModelAndView("developer/db/create");
 	}
 
+	@PostMapping("/upload")
+	public ModelAndView createApplication(
+			@ModelAttribute @Valid CreateDeploymentForm createDeploymentForm,
+			BindingResult bindingResult,
+			@SessionAttribute("user") User user
+	)
+	{
+		Application application = user.getApplication();
+		if(application == null){
+			bindingResult.addError(new ObjectError("createDeploymentForm","You must create the parent application first"));
+		}
+		if(bindingResult.hasErrors()){
+			return new ModelAndView("developer/upload");
+		}
+		try {
+			appManagement.createDeployment(
+					createDeploymentForm.warFile,
+					application
+			);
+		} catch (ApplicationManagementService.ApiError apiError) {
+			bindingResult.addError(new ObjectError(
+					"createDeploymentForm",
+					"There was an error with the deployment api. Please report this to a member of team 1."
+			));
+			return new ModelAndView("developer/auth/create");
+		}
+		return new ModelAndView(new RedirectView("/developer"));
+	}
+
+	@PostMapping("/create")
+	public ModelAndView createApplication(
+			@ModelAttribute @Valid CreateApplicationForm createApplicationForm,
+			BindingResult bindingResult,
+			@SessionAttribute("user") User user
+	)
+	{
+		if(bindingResult.hasErrors()){
+			return new ModelAndView("developer/create");
+		}
+		appManagement.createApplication(
+				createApplicationForm.applicationName,
+				createApplicationForm.description,
+				user
+		);
+		return new ModelAndView(new RedirectView("/developer"));
+	}
+
 	@PostMapping("/auth/create")
 	public ModelAndView createAuthApplication(
 			@ModelAttribute @Valid CreateAuthApplicationForm createApplicationForm,
@@ -80,14 +148,18 @@ public class DeveloperController {
 			@SessionAttribute("user") User user
 	)
 	{
+		Application application = user.getApplication();
+		if(application == null){
+			bindingResult.addError(new ObjectError("createApplicationForm","You must create the parent application first"));
+		}
 		if(bindingResult.hasErrors()){
 			return new ModelAndView("developer/auth/create");
 		}
 		try {
 			appManagement.createAuthApplication(
-					createApplicationForm.applicationName,
 					createApplicationForm.redirectUri,
-					user
+					user,
+					application
 			);
 		} catch (ApplicationManagementService.ApiError apiError) {
 			bindingResult.addError(new ObjectError(
@@ -106,31 +178,24 @@ public class DeveloperController {
 			@SessionAttribute("user") User user
 	)
 	{
+		Application application = user.getApplication();
+		if(application == null){
+			bindingResult.addError(new ObjectError("createApplicationForm","You must create the parent application first"));
+		}
 		if(bindingResult.hasErrors()){
 			return new ModelAndView("developer/db/create");
 		}
 		appManagement.createDbApplication(
-				createApplicationForm.applicationName,
 				createApplicationForm.databasePassword,
-				user
+				application
 		);
 		return new ModelAndView(new RedirectView("/developer"));
 	}
 
 	@FieldsMatch({"databasePassword","confirmDatabasePassword"})
 	public class CreateAuthApplicationForm{
-		@Size(min=5,max=28)
-		String applicationName;
 		@NotBlank
 		String redirectUri;
-
-		public String getApplicationName() {
-			return applicationName;
-		}
-
-		public void setApplicationName(String applicationName) {
-			this.applicationName = applicationName;
-		}
 
 		public String getRedirectUri() {
 			return redirectUri;
@@ -144,20 +209,10 @@ public class DeveloperController {
 
 	@FieldsMatch({"databasePassword","confirmDatabasePassword"})
 	public class CreateDbApplicationForm{
-		@Size(min=5)
-		String applicationName;
 		@Size(min=3)
 		String databasePassword;
 		@Size(min=3)
 		String confirmDatabasePassword;
-
-		public String getApplicationName() {
-			return applicationName;
-		}
-
-		public void setApplicationName(String applicationName) {
-			this.applicationName = applicationName;
-		}
 
 		public String getDatabasePassword() {
 			return databasePassword;
@@ -173,6 +228,43 @@ public class DeveloperController {
 
 		public void setConfirmDatabasePassword(String confirmDatabasePassword) {
 			this.confirmDatabasePassword = confirmDatabasePassword;
+		}
+	}
+
+	public class CreateApplicationForm {
+		@Size(min=5,max=28)
+		String applicationName;
+
+		@NotBlank
+		String description;
+
+		public String getApplicationName() {
+			return applicationName;
+		}
+
+		public void setApplicationName(String applicationName) {
+			this.applicationName = applicationName;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+	}
+
+	public class CreateDeploymentForm {
+		@NotNull
+		MultipartFile warFile;
+
+		public MultipartFile getWarFile() {
+			return warFile;
+		}
+
+		public void setWarFile(MultipartFile warFile) {
+			this.warFile = warFile;
 		}
 	}
 }

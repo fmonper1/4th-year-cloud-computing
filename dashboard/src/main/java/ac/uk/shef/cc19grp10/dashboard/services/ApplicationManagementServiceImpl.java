@@ -6,17 +6,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.*;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.FileSystems;
+import java.nio.file.PathMatcher;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Optional;
 
 /**
  * <Doc here>
@@ -30,10 +45,18 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 	private ApplicationRepository appRepo;
 
 	@Autowired
+	private DeploymentRepository deploymentRepo;
+
+	@Autowired
+	private DbApplicationRepository dbAppRepo;
+
+	@Autowired
 	private DbManagementRepository dbManagement;
 
 	@Autowired
 	private TransactionTemplate transactionTemplate;
+
+	private static final String MANAGER_APP_BASE_URL = "http://143.167.9.214:8080/manager";
 
 	private RestTemplate restTemplate;
 
@@ -47,17 +70,17 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 	private Logger logger = LoggerFactory.getLogger(ApplicationManagementServiceImpl.class);
 
 	@Override
-	public Application createDbApplication(String applicationName, String dbPassword, User owner){
-		String clientId = nameToClientId(applicationName);
+	public DbApplication createDbApplication(String dbPassword, Application application){
+		String clientId = nameToClientId(application.getName());
 		String dbUsername = clientId;
 		String applicationUrl = clientId;
-		String schemaName = nameToSchemaName(applicationName);
+		String schemaName = nameToSchemaName(application.getName());
 
 		//TODO: scan for image path
 		String imagePath = null;
 
 		return transactionTemplate.execute(status ->{
-			Application app = appRepo.save(new Application(applicationName, applicationUrl, imagePath, "TODO: descriptions", dbUsername, schemaName, owner));
+			DbApplication app = dbAppRepo.save(new DbApplication(dbUsername,schemaName, application));
 			//using clientId as db username and schema name also
 			dbManagement.createDbUser(dbUsername,dbPassword);
 			dbManagement.createDbSchema(schemaName);
@@ -86,8 +109,8 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 	}
 
 	@Override
-	public AuthApplication createAuthApplication(String applicationName, String redirectUri, User owner) throws ApiError{
-		String clientId = nameToClientId(applicationName);
+	public AuthApplication createAuthApplication(String redirectUri, User owner, Application application) throws ApiError{
+		String clientId = nameToClientId(application.getName());
 		String dbUsername = clientId;
 		String applicationUrl = clientId;
 
@@ -99,7 +122,7 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 		//try create the auth part of the app
 		ResponseEntity<AuthApplication> res;
 		try {
-			res = restTemplate.postForEntity(authServletUrl + "developer/create?access_token={accessToken}", new CreateAuthApplicationRequest(applicationName,redirectUri), AuthApplication.class, accessToken);
+			res = restTemplate.postForEntity(authServletUrl + "developer/create?access_token={accessToken}", new CreateAuthApplicationRequest(application.getName(),redirectUri), AuthApplication.class, accessToken);
 		}catch(HttpClientErrorException.BadRequest badReq){
 			logger.info("Bad request response body: {}", badReq.getResponseBodyAsString());
 			throw new ApiError();
@@ -117,6 +140,59 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 		return authApp;
 	}
 
+	public Application createApplication(String applicationName, String description, User owner){
+		return appRepo.save(new Application(applicationName, description, owner));
+	}
+
+	@Override
+	public Deployment createDeployment(MultipartFile warFile, Application application) throws ApiError {
+		String clientId = nameToClientId(application.getName());
+		String url = "/"+clientId;
+		MultiValueMap<String,Object> body = new LinkedMultiValueMap<>();
+		body.add("file",warFile);
+		RequestEntity request = RequestEntity.put(URI.create(MANAGER_APP_BASE_URL +"/text/deploy?update=true&path="+url))
+				.body(body);
+		ResponseEntity<String> res = restTemplate.exchange(request,String.class);
+		if(!res.getStatusCode().is2xxSuccessful()){
+			logger.warn("Manager deploy responded with status code: {}",res.getStatusCode().value());
+			throw new ApiError();
+		}
+		String resBody = res.getBody();
+		if(resBody == null){
+			logger.warn("Manager deploy responded with no body");
+			throw new ApiError();
+		}
+
+		if(!resBody.startsWith("OK - ")){
+			logger.warn("Manager deploy responded with: {}",resBody);
+			throw new ApiError();
+		}
+
+		//determine image path
+		String imagePath = null;
+
+		File catalinaBase = new File( System.getProperty( "catalina.base" ) ).getAbsoluteFile();
+		File webinfDirectory = new File( catalinaBase, "webapps/"+clientId+"/WEB-INF/" );
+
+		//look for image.png image.svg, or image.jpg
+		PathMatcher imageMatcher =
+				FileSystems.getDefault().getPathMatcher("glob:image.{png,jpg,svg}");
+		//look for image.png image.svg, or image.jpg in the web-inf directory of an application
+		File[] images = webinfDirectory.listFiles(pathname -> imageMatcher.matches(pathname.toPath()));
+
+		String bestImagePath = null;
+
+		if(images != null && images.length > 0){
+			//TODO: better metric for best image. probably something like largest and closest to optimal aspect ratio would be best
+			Optional<File> svg = Arrays.stream(images).filter(image -> image.toPath().endsWith(".svg")).findAny();
+			Optional<File> png = Arrays.stream(images).filter(image -> image.toPath().endsWith(".png")).findAny();
+			File bestImage = svg.orElse(png.orElse(images[0]));
+			bestImagePath = bestImage.getAbsolutePath();
+		}
+
+		return deploymentRepo.save(new Deployment(url,bestImagePath,application));
+	}
+
 	/**
 	 * Create a normalised, schema safe
 	 *
@@ -125,7 +201,7 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 	 */
 	private String nameToSchemaName(String applicationName) {
 		//unicode normalise
-		return Normalizer.normalize(applicationName, Normalizer.Form.NFD)
+		return "app_"+Normalizer.normalize(applicationName, Normalizer.Form.NFD)
 				//replace space with dash
 				.replaceAll("\\p{Space}","")
 				//remove non alphanumeric/dash characters
@@ -144,9 +220,9 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 		//unicode normalise
 		return "app_"+Normalizer.normalize(applicationName, Normalizer.Form.NFD)
 				//replace space with dash
-				.replaceAll("\\p{Space}","-")
+				.replaceAll("\\p{Space}","_")
 				//remove non alphanumeric/dash characters
-				.replaceAll("[^\\p{Alnum}-]", "")
+				.replaceAll("[^\\p{Alnum}_]", "")
 				//and lowercase it
 				.toLowerCase();
 	}
