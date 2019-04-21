@@ -127,7 +127,7 @@ public class DeveloperController {
 	}
 
 	public class CreateApplicationForm{
-		@Size(min=5)
+		@Size(min=5,max=28)
 		String applicationName;
 		@NotBlank
 		String redirectUri;

@@ -119,7 +119,7 @@ public class DeveloperController {
 
 	@FieldsMatch({"databasePassword","confirmDatabasePassword"})
 	public class CreateAuthApplicationForm{
-		@Size(min=5)
+		@Size(min=5,max=28)
 		String applicationName;
 		@NotBlank
 		String redirectUri;
