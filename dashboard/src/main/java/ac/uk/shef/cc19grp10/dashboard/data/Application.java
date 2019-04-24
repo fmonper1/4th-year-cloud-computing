@@ -4,10 +4,10 @@ import javax.persistence.*;
 
 @Entity
 public class Application {
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
-    private String name;
+  @Id
+  @GeneratedValue(strategy= GenerationType.IDENTITY)
+  private Long id;
+  private String name;
 	private String description;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE}, optional = false)
@@ -50,7 +50,7 @@ public class Application {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
+  
 	public User getOwner() {
 		return owner;
 	}
