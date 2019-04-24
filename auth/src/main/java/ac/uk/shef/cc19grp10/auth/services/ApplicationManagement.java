@@ -9,7 +9,7 @@ import ac.uk.shef.cc19grp10.auth.data.User;
  * Created on 13/04/2019.
  */
 public interface ApplicationManagement {
-	Application createApplication(String redirectUri, String applicationName, User owner, String dbPassword) throws ApplicationExistsError;
+	Application createApplication(String redirectUri, String applicationName, User owner) throws ApplicationExistsError;
 
 	class ApplicationExistsError extends Throwable {
 	}

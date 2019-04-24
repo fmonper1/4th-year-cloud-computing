@@ -2,6 +2,7 @@ package ac.uk.shef.cc19grp10.dashboard;
 
 import ac.uk.shef.cc19grp10.dashboard.data.Application;
 import ac.uk.shef.cc19grp10.dashboard.data.ApplicationRepository;
+import ac.uk.shef.cc19grp10.dashboard.data.Deployment;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,11 @@ public class ApplicationDataController {
     @GetMapping("{id}/image")
     public void index(@PathVariable("id") long id, HttpServletResponse response) throws IOException {
 		Application app = appRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-		File file = new File(app.getImagePath());
+		Deployment deployment = app.getDeployment();
+		if(deployment == null){
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		}
+		File file = new File(deployment.getImagePath());
 		FileInputStream fileInputStream = new FileInputStream(file);
 		IOUtils.copy(fileInputStream,response.getOutputStream());
 		response.flushBuffer();

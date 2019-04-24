@@ -4,30 +4,26 @@ import javax.persistence.*;
 
 @Entity
 public class Application {
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-	private String url;
-	private String imagePath;
+  @Id
+  @GeneratedValue(strategy= GenerationType.IDENTITY)
+  private Long id;
+  private String name;
 	private String description;
-	@Column(unique = true)
-	private String dbUsername;
-	@Column(unique = true)
-	private String schemaName;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE}, optional = false)
 	private User owner;
 
+	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE}, orphanRemoval = true, mappedBy = "application")
+	private Deployment deployment;
+
+	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE}, orphanRemoval = true, mappedBy = "application")
+	private DbApplication dbApplication;
+
 	protected Application(){}
 
-	public Application(String name, String url, String imagePath,String description, String dbUsername, String schemaName, User owner){
+	public Application(String name,String description, User owner){
 		this.name = name;
-		this.url = url;
-		this.imagePath = imagePath;
 		this.description = description;
-		this.dbUsername = dbUsername;
-		this.schemaName = schemaName;
 		this.owner = owner;
 	}
 
@@ -47,22 +43,6 @@ public class Application {
 		this.name = name;
 	}
 
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public String getImagePath() {
-		return imagePath;
-	}
-
-	public void setImagePath(String imagePath) {
-		this.imagePath = imagePath;
-	}
-
 	public String getDescription() {
 		return description;
 	}
@@ -70,23 +50,7 @@ public class Application {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-	public String getDbUsername() {
-		return dbUsername;
-	}
-
-	public void setDbUsername(String dbUsername) {
-		this.dbUsername = dbUsername;
-	}
-
-	public String getSchemaName() {
-		return schemaName;
-	}
-
-	public void setSchemaName(String schemaName) {
-		this.schemaName = schemaName;
-	}
-
+  
 	public User getOwner() {
 		return owner;
 	}
@@ -95,7 +59,19 @@ public class Application {
 		this.owner = owner;
 	}
 
-	public String getDbUrl() {
-		return "jdbc:mysql://localhost/"+schemaName+"?useUnicode=true&characterEncoding=UTF-8";
+	public Deployment getDeployment() {
+		return deployment;
+	}
+
+	public void setDeployment(Deployment deployment) {
+		this.deployment = deployment;
+	}
+
+	public DbApplication getDbApplication() {
+		return dbApplication;
+	}
+
+	public void setDbApplication(DbApplication dbApplication) {
+		this.dbApplication = dbApplication;
 	}
 }

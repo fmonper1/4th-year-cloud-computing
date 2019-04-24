@@ -2,32 +2,32 @@ package ac.uk.shef.cc19grp10.auth;
 
 import ac.uk.shef.cc19grp10.auth.data.Application;
 import ac.uk.shef.cc19grp10.auth.data.ApplicationRepository;
+import ac.uk.shef.cc19grp10.auth.data.Authorisation;
 import ac.uk.shef.cc19grp10.auth.data.User;
 import ac.uk.shef.cc19grp10.auth.services.ApplicationManagement;
-import ac.uk.shef.cc19grp10.auth.validation.FieldsMatch;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <Doc here>
  * <p>
  * Created on 12/04/2019.
  */
-@Controller
+@RestController
 @RequestMapping("/developer")
 public class DeveloperController {
 
@@ -40,45 +40,37 @@ public class DeveloperController {
 	Logger logger = LoggerFactory.getLogger(DeveloperController.class);
 
 	@GetMapping
-	public ModelAndView viewApplication(
-			@SessionAttribute User user
+	public Application viewApplication(
+			@FromAccessToken Authorisation auth
 	)
 	{
-		return new ModelAndView("developer/index","application",user.getApplication());
-	}
-
-	@GetMapping("/create")
-	public ModelAndView createApplication(
-			@ModelAttribute CreateApplicationForm createApplicationForm
-	)
-	{
-		return new ModelAndView("developer/create");
+		return auth.getUser().getApplication();
 	}
 
 	@PostMapping("/create")
-	public ModelAndView createApplication(
+	@ResponseBody
+	public ResponseEntity<Object> createApplication(
 			@ModelAttribute @Valid CreateApplicationForm createApplicationForm,
 			BindingResult bindingResult,
-			@SessionAttribute User user
+			@FromAccessToken Authorisation auth
 	)
 	{
+		User user = auth.getUser();
 		if(user.hasApplication()){
 			//This is mostly just laziness to be honest
 			bindingResult.addError(new ObjectError(
 					"createApplicationForm",
 					"You already have an application. Please edit that one."
 			));
-			return new ModelAndView("developer/create");
 		}
 		if(bindingResult.hasErrors()){
-			return new ModelAndView("developer/create");
+			return ResponseEntity.badRequest().body(new JsonErrors(bindingResult));
 		}
 		try {
 			appManagement.createApplication(
 					createApplicationForm.redirectUri,
 					createApplicationForm.applicationName,
-					user,
-					createApplicationForm.databasePassword
+					user
 			);
 		} catch (ApplicationManagement.ApplicationExistsError applicationExistsError) {
 			bindingResult.addError(new FieldError(
@@ -86,9 +78,9 @@ public class DeveloperController {
 					"applicationName",
 					"An application with that name already exists."
 			));
-			return new ModelAndView("developer/create");
+			return ResponseEntity.badRequest().body(new JsonErrors(bindingResult));
 		}
-		return new ModelAndView(new RedirectView("/developer"));
+		return ResponseEntity.ok(user.getApplication());
 	}
 
 	/**
@@ -108,16 +100,37 @@ public class DeveloperController {
 				.toLowerCase();
 	}
 
-	@FieldsMatch({"databasePassword","confirmDatabasePassword"})
+	private class JsonError {
+		@JsonProperty
+		String object;
+		@JsonProperty
+		String field;
+		@JsonProperty
+		String error;
+		JsonError(ObjectError error) {
+			this.object = error.getObjectName();
+			this.error = error.getDefaultMessage();
+			if( error instanceof FieldError){
+				this.field = ((FieldError) error).getField();
+			}
+		}
+	}
+
+	private class JsonErrors {
+		@JsonProperty
+		List<JsonError> errors = new ArrayList<>();
+		JsonErrors(BindingResult bindingResult) {
+			for (ObjectError error : bindingResult.getAllErrors()){
+				errors.add(new JsonError(error));
+			}
+		}
+	}
+
 	public class CreateApplicationForm{
-		@Size(min=5)
+		@Size(min=5,max=28)
 		String applicationName;
 		@NotBlank
 		String redirectUri;
-		@Size(min=3)
-		String databasePassword;
-		@Size(min=3)
-		String confirmDatabasePassword;
 
 		public String getApplicationName() {
 			return applicationName;
@@ -133,22 +146,6 @@ public class DeveloperController {
 
 		public void setRedirectUri(String redirectUri) {
 			this.redirectUri = redirectUri;
-		}
-
-		public String getDatabasePassword() {
-			return databasePassword;
-		}
-
-		public void setDatabasePassword(String databasePassword) {
-			this.databasePassword = databasePassword;
-		}
-
-		public String getConfirmDatabasePassword() {
-			return confirmDatabasePassword;
-		}
-
-		public void setConfirmDatabasePassword(String confirmDatabasePassword) {
-			this.confirmDatabasePassword = confirmDatabasePassword;
 		}
 	}
 }

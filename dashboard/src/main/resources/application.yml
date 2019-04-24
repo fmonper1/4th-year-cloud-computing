@@ -1,0 +1,27 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+  datasource:
+    url: jdbc:mysql://localhost/dashboard?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: O53C5oybLAOMB4y
+  main:
+    banner-mode: 'off'
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp/
+      suffix: .jsp
+  flyway:
+    enabled: false
+auth:
+  redirect_uri: http://localhost:8080/auth/callback
+  client_id: app_team-01-book-swap
+  client_secret: RFvBcbUI9uTPp6DiGwDnyE9c8LyeXJ5x7TbPx4UDaoM=
+  auth_servlet_url: http://localhost:8081
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          client: DEBUG

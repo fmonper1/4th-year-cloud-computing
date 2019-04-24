@@ -1,10 +1,9 @@
 package ac.uk.shef.cc19grp10.auth.data;
 
-import ac.uk.shef.cc19grp10.auth.security.HashingStrategy;
 import ac.uk.shef.cc19grp10.auth.security.SecureUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.security.MessageDigest;
 import java.util.Base64;
 import java.util.List;
 
@@ -17,12 +16,9 @@ public class Application {
     private String name;
 	@Column(unique = true)
 	private String clientId;
-	@Column(unique = true)
-	private String dbUsername;
-	@Column(unique = true)
-	private String schemaName;
 	private String redirectUri;
 
+	@JsonIgnore
 	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE}, optional = false)
 	private User owner;
 
@@ -34,11 +30,9 @@ public class Application {
 
 	protected Application(){}
 
-	public Application(String name, String clientId, String dbUsername, String schemaName, User owner, String redirectUri){
+	public Application(String name, String clientId, User owner, String redirectUri){
 		this.name = name;
 		this.clientId = clientId;
-		this.dbUsername = dbUsername;
-		this.schemaName = schemaName;
 		this.owner = owner;
 		this.clientSecret = SecureUtils.randomBytes(32);
 		this.redirectUri = redirectUri;
@@ -70,17 +64,5 @@ public class Application {
 
 	public User getOwner() {
 		return owner;
-	}
-
-	public String getDbUsername() {
-		return dbUsername;
-	}
-
-	public String getSchemaName() {
-		return schemaName;
-	}
-
-	public String getDbUrl() {
-		return "jdbc:mysql://localhost/"+schemaName+"?useUnicode=true&characterEncoding=UTF-8";
 	}
 }
