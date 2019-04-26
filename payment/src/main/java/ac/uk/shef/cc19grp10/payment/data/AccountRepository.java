@@ -2,6 +2,8 @@ package ac.uk.shef.cc19grp10.payment.data;
 
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Optional;
+
 public interface AccountRepository extends CrudRepository<Account, Long> {
-//    Account findByUserID(String id);
+    Optional<Account> findAccountByOwner(User owner);
 }

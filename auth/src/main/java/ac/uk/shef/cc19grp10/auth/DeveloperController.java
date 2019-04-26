@@ -1,9 +1,6 @@
 package ac.uk.shef.cc19grp10.auth;
 
-import ac.uk.shef.cc19grp10.auth.data.Application;
-import ac.uk.shef.cc19grp10.auth.data.ApplicationRepository;
-import ac.uk.shef.cc19grp10.auth.data.Authorisation;
-import ac.uk.shef.cc19grp10.auth.data.User;
+import ac.uk.shef.cc19grp10.auth.data.*;
 import ac.uk.shef.cc19grp10.auth.services.ApplicationManagement;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
@@ -37,6 +34,9 @@ public class DeveloperController {
 	@Autowired
 	ApplicationRepository appRepo;
 
+	@Autowired
+	UserRepository userRepository;
+
 	Logger logger = LoggerFactory.getLogger(DeveloperController.class);
 
 	@GetMapping
@@ -48,6 +48,19 @@ public class DeveloperController {
 		Application app = user.getApplication();
 		logger.info("Returning app {} for user {}",app,user);
 		return app;
+	}
+
+	@GetMapping("/dummy")
+	public Object dummy(
+			@RequestParam("redirect_uri") String redirect,
+			@RequestParam("app_name") String appName,
+			@RequestParam(value = "username", required = false, defaultValue = "user") String username
+	) throws ApplicationManagement.ApplicationExistsError {
+		return appManagement.createApplication(
+				redirect,
+				appName,
+				userRepository.findByName(username)
+		);
 	}
 
 	@PostMapping("/create")

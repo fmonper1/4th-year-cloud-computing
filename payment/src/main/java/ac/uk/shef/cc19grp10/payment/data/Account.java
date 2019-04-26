@@ -1,9 +1,18 @@
 package ac.uk.shef.cc19grp10.payment.data;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 
 @Entity
 public class Account {
+
+    @JsonIgnore
+    private static final int INITIAL_USER_BALANCE = 500;
+    @JsonIgnore
+    private static final int INITIAL_APP_BALANCE = 0;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -11,9 +20,9 @@ public class Account {
 
     private int balance;
 
-    protected Account() {
-        // Nothing special here
-    }
+    @OneToOne
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    private User owner;
 
     public Long getId() {
         return id;
@@ -23,7 +32,38 @@ public class Account {
         return balance;
     }
 
-    public Account(int initialBalance){
+    public void incrementBalance(int amount) {
+        this.balance += amount;
+    }
+
+    public void decrementBalance(int amount) {
+        this.balance -= amount;
+    }
+
+    public static void transfer(Account from, Account to, int amount) {
+        from.decrementBalance(amount);
+        to.incrementBalance(amount);
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    private Account(int initialBalance){
         this.balance = initialBalance;
+    }
+
+    protected Account() {}
+
+    public static Account newUserAccount() {
+        return new Account(INITIAL_USER_BALANCE);
+    }
+
+    public static Account newApplicationAccount() {
+        return new Account(INITIAL_APP_BALANCE);
     }
 }
