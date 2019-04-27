@@ -20,8 +20,8 @@ public class AccountController {
 
 	private Logger logger = LoggerFactory.getLogger(AccountController.class);
 
-	@GetMapping("/balance")
-	public @ResponseBody Object getBalance(
+	@GetMapping
+	public @ResponseBody Object getCurrentAccount(
 			@SessionAttribute("user") User user,
 			@RequestParam(value = "accountId", required = false) Long id
 	)

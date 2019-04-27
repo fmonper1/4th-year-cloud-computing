@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Account {
@@ -23,6 +25,12 @@ public class Account {
     @OneToOne
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     private User owner;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fromAccount", targetEntity = Transaction.class)
+    private Set<Transaction> outgoingTransactions;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "toAccount", targetEntity = Transaction.class)
+    private Set<Transaction> incomingTransactions;
 
     public Long getId() {
         return id;
@@ -51,6 +59,23 @@ public class Account {
 
     public void setOwner(User owner) {
         this.owner = owner;
+    }
+
+    @JsonIgnore
+    public Set<Transaction> getOutgoingTransactions() {
+        return outgoingTransactions;
+    }
+
+    @JsonIgnore
+    public Set<Transaction> getIncomingTransactions() {
+        return incomingTransactions;
+    }
+
+    public Set<Transaction> getTransactions() {
+        Set<Transaction> allTransactions = new HashSet<>();
+        allTransactions.addAll(outgoingTransactions);
+        allTransactions.addAll(incomingTransactions);
+        return allTransactions;
     }
 
     private Account(int initialBalance){
