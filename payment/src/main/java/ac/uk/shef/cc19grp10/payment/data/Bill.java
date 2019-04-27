@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import javax.persistence.*;
 
 @Entity
-public class Transaction {
+public class Bill {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,23 +14,16 @@ public class Transaction {
 
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @ManyToOne
-    private Account fromAccount;
-
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-    @ManyToOne
     private Account toAccount;
 
     private int amount;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "transaction", targetEntity = Bill.class)
-    private Bill bill;
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @OneToOne
+    private Transaction transaction;
 
     public Long getId() {
         return id;
-    }
-
-    public Account getFromAccount() {
-        return fromAccount;
     }
 
     public Account getToAccount() {
@@ -41,9 +34,22 @@ public class Transaction {
         return amount;
     }
 
-    private Transaction(Account from, Account to, int amount) {
-
+    public Transaction getTransaction() {
+        return transaction;
     }
 
-    protected Transaction() {}
+    public void setTransaction(Transaction transaction) {
+        this.transaction = transaction;
+    }
+
+    public boolean getPaid() {
+        return this.transaction != null;
+    }
+
+    private Bill(Account toAccount, int amount) {
+        this.toAccount = toAccount;
+        this.amount = amount;
+    }
+
+    protected Bill() {}
 }
