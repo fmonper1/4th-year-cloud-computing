@@ -52,10 +52,7 @@
                     <ul class="list-unstyled">
                         <li><a href="#" class="text-white">Profile</a></li>
                         <li><a href="#" class="text-white">Signout</a></li>
-                    </ul>
-                    <h4 class="text-white">Developer</h4>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-white">Applications</a></li>
+                        <li><a href="/developer" class="text-white">Developer</a></li>
                     </ul>
                 </div>
             </div>

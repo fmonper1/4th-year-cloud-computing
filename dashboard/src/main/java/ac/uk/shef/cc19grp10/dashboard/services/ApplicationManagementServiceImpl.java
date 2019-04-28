@@ -2,12 +2,17 @@ package ac.uk.shef.cc19grp10.dashboard.services;
 
 import ac.uk.shef.cc19grp10.dashboard.data.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -58,11 +63,17 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 
 	private static final String MANAGER_APP_BASE_URL = "http://143.167.9.214:8080/manager";
 
+	@Value("${dashboard.manager.username}")
+	private String managerUsername;
+
+	@Value("${dashboard.manager.password}")
+	private String managerPassword;
+
 	private RestTemplate restTemplate;
 
 	public ApplicationManagementServiceImpl(){
 		restTemplate = new RestTemplate();
-		restTemplate.setMessageConverters(Arrays.asList(new MappingJackson2HttpMessageConverter()));
+		restTemplate.setMessageConverters(Arrays.asList(new MappingJackson2HttpMessageConverter(), new FormHttpMessageConverter(), new StringHttpMessageConverter()));
 	}
 
 	@Value("${auth.auth_servlet_url}")
@@ -98,22 +109,16 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 
 		ResponseEntity<AuthApplication> res = restTemplate.getForEntity(authServletUrl+"/developer?access_token={accessToken}",AuthApplication.class,accessToken);
 		if (!res.getStatusCode().is2xxSuccessful()){
+			logger.warn("Manager get responded with status code: {}",res.getStatusCode().value());
 			throw new ApiError();
 		}
 
-		AuthApplication authApp = res.getBody();
-		if (authApp == null){
-			throw new ApiError();
-		}
-		return authApp;
+		//don't check for null, it's allowed
+		return res.getBody();
 	}
 
 	@Override
 	public AuthApplication createAuthApplication(String redirectUri, User owner, Application application) throws ApiError{
-		String clientId = nameToClientId(application.getName());
-		String dbUsername = clientId;
-		String applicationUrl = clientId;
-
 		//TODO: how to re-aquire access token if it's expired. (alternatively don't expire access tokens)
 		HashMap<String,String> accessToken = new HashMap<>();
 		logger.info("access_token: {}", owner.getAccessToken());
@@ -129,11 +134,13 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 		}
 
 		if (!res.getStatusCode().is2xxSuccessful()){
+			logger.warn("Manager create responded with status code: {}",res.getStatusCode().value());
 			throw new ApiError();
 		}
 
 		AuthApplication authApp = res.getBody();
 		if (authApp == null){
+			logger.warn("Manager create responded with no body");
 			throw new ApiError();
 		}
 
@@ -147,30 +154,14 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 	@Override
 	public Deployment createDeployment(MultipartFile warFile, Application application) throws ApiError {
 		String clientId = nameToClientId(application.getName());
-		String url = "/"+clientId;
-		MultiValueMap<String,Object> body = new LinkedMultiValueMap<>();
-		body.add("file",warFile);
-		RequestEntity request = RequestEntity.put(URI.create(MANAGER_APP_BASE_URL +"/text/deploy?update=true&path="+url))
-				.body(body);
-		ResponseEntity<String> res = restTemplate.exchange(request,String.class);
-		if(!res.getStatusCode().is2xxSuccessful()){
-			logger.warn("Manager deploy responded with status code: {}",res.getStatusCode().value());
-			throw new ApiError();
-		}
-		String resBody = res.getBody();
-		if(resBody == null){
-			logger.warn("Manager deploy responded with no body");
-			throw new ApiError();
-		}
+		String url = deployWarFile(warFile, clientId);
 
-		if(!resBody.startsWith("OK - ")){
-			logger.warn("Manager deploy responded with: {}",resBody);
-			throw new ApiError();
-		}
+		String bestImagePath = findBestImagePath(clientId);
 
-		//determine image path
-		String imagePath = null;
+		return deploymentRepo.save(new Deployment(url,bestImagePath,application));
+	}
 
+	private String findBestImagePath(String clientId) {
 		File catalinaBase = new File( System.getProperty( "catalina.base" ) ).getAbsoluteFile();
 		File webinfDirectory = new File( catalinaBase, "webapps/"+clientId+"/WEB-INF/" );
 
@@ -189,8 +180,38 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 			File bestImage = svg.orElse(png.orElse(images[0]));
 			bestImagePath = bestImage.getAbsolutePath();
 		}
+		return bestImagePath;
+	}
 
-		return deploymentRepo.save(new Deployment(url,bestImagePath,application));
+	private String deployWarFile(MultipartFile warFile, String clientId) throws ApiError {
+		String url = "/"+clientId;
+		MultiValueMap<String,Object> body = new LinkedMultiValueMap<>();
+		try {
+			body.add("file",new InputStreamResource(warFile.getInputStream()));
+		} catch (IOException e) {
+			logger.error("Couldn't get inputstream for uploaded war file");
+			throw new ApiError();
+		}
+		RequestEntity request = RequestEntity.put(URI.create(MANAGER_APP_BASE_URL +"/text/deploy?update=true&path="+url))
+				.contentType(MediaType.MULTIPART_FORM_DATA)
+				.header("Authorization","Basic "+ Base64.encodeBase64String((managerUsername+":"+managerPassword).getBytes()))
+				.body(body);
+		ResponseEntity<String> res = restTemplate.exchange(request,String.class);
+		if(!res.getStatusCode().is2xxSuccessful()){
+			logger.warn("Manager deploy responded with status code: {}",res.getStatusCode().value());
+			throw new ApiError();
+		}
+		String resBody = res.getBody();
+		if(resBody == null){
+			logger.warn("Manager deploy responded with no body");
+			throw new ApiError();
+		}
+
+		if(!resBody.startsWith("OK - ")){
+			logger.warn("Manager deploy responded with: {}",resBody);
+			throw new ApiError();
+		}
+		return url;
 	}
 
 	/**

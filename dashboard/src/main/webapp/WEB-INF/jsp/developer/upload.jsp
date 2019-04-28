@@ -16,7 +16,7 @@
     <div class="container h-100">
         <div class="row h-100 justify-content-center align-items-center">
             <div class="col-4">
-                <form:form method="POST" modelAttribute="createDeploymentForm">
+                <form:form method="POST" modelAttribute="createDeploymentForm" enctype="multipart/form-data">
                     <form:errors cssClass="alert alert-danger" element="div"/>
                     <my:bs-input path="warFile" placeholder="War File" label="War File" type="file"/>
                     <input type="submit" value="Create Application" class="btn btn-primary btn-block"/>

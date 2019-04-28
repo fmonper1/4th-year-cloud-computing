@@ -44,7 +44,10 @@ public class DeveloperController {
 			@FromAccessToken Authorisation auth
 	)
 	{
-		return auth.getUser().getApplication();
+		User user = auth.getUser();
+		Application app = user.getApplication();
+		logger.info("Returning app {} for user {}",app,user);
+		return app;
 	}
 
 	@PostMapping("/create")

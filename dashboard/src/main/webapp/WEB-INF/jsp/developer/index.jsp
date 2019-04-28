@@ -57,6 +57,8 @@
                                 <a href="/developer/auth/create" class="btn btn-primary btn-block">Create authentication credentials</a>
                             </c:otherwise>
                         </c:choose>
+                        <h1>Deployment</h1>
+                        <a href="/developer/upload" class="btn btn-primary btn-block">Deploy your application</a>
                     </c:when>
                     <c:otherwise>
                         <h1>You have not created an application:</h1>
