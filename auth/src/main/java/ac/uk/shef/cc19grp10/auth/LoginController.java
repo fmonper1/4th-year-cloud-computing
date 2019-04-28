@@ -15,20 +15,19 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-/**
- * <Doc here>
- * <p>
- * Created on 08/04/2019.
- */
 @Controller
 @RequestMapping("/login")
 public class LoginController {
 
 	private final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
+	private static final String DEFAULT_SUCCESS_REDIRECT = "/auth";
+	private static final String LOGIN_REDIRECT_ATTR_NAME = "loginRedirect";
 
 	@Autowired
 	HashingStrategy hashingStrategy;
@@ -41,10 +40,17 @@ public class LoginController {
 
 	@GetMapping
 	public ModelAndView login(
-			@ModelAttribute LoginForm loginForm
+			@ModelAttribute LoginForm loginForm,
+			@SessionAttribute(required = false) User user,
+			HttpServletRequest request
 	)
 	{
 		logger.info("Login get query");
+
+		if (user != null) {
+			logger.info("User {} already signed in, redirecting...", user);
+			return handleRedirect(request);
+		}
 
 		return new ModelAndView("login");
 	}
@@ -53,8 +59,7 @@ public class LoginController {
 	public ModelAndView postLogin(
 			@ModelAttribute @Valid LoginForm loginForm,
 			BindingResult bindingResult,
-			HttpServletRequest request,
-			@SessionAttribute(required = false) String loginRedirect
+			HttpServletRequest request
 	)
 	{
 		logger.info("Login post query");
@@ -64,20 +69,28 @@ public class LoginController {
 
 		User user = userRepo.findByName(loginForm.username);
 
-		if(user!=null&&user.passwordMatches(loginForm.password,hashingStrategy)){
-			//redirect to auth by default
-			loginRedirect = loginRedirect==null?"/auth":loginRedirect;
-			//remove redirect if set
-			request.getSession().removeAttribute("loginRedirect");
-
-			RedirectView redirectView = new RedirectView(loginRedirect);
+		if (user != null && user.passwordMatches(loginForm.password, hashingStrategy)) {
 			request.getSession().setAttribute("userId", user.getId());
-			return new ModelAndView(redirectView);
-		}else{
+			return handleRedirect(request);
+		} else {
 			logger.info("Incorrect Username or password");
-			bindingResult.addError(new ObjectError("signupForm","Incorrect Username or password"));
+			bindingResult.addError(new ObjectError("signupForm", "Incorrect Username or password"));
 			return new ModelAndView("login");
 		}
+	}
+
+	private ModelAndView handleRedirect(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+
+		String loginRedirect = (String) session.getAttribute(LOGIN_REDIRECT_ATTR_NAME);
+
+		if (loginRedirect == null) {
+			loginRedirect = DEFAULT_SUCCESS_REDIRECT;
+		}
+
+		request.getSession().removeAttribute(LOGIN_REDIRECT_ATTR_NAME); // Remove if set
+
+		return new ModelAndView(new RedirectView(loginRedirect));
 	}
 
 	public class LoginForm {
