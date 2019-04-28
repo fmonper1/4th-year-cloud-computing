@@ -1,11 +1,9 @@
 spring:
+  profiles:
+    active: dev
   jpa:
     hibernate:
       ddl-auto: validate
-  datasource:
-    url: jdbc:mysql://localhost/dashboard?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8
-    username: root
-    password: O53C5oybLAOMB4y
   main:
     banner-mode: 'off'
   mvc:
@@ -26,11 +24,3 @@ dashboard:
   manager:
     username: dashboard_manager_account
     password: ncy3wvpdkahl
-logging:
-  level:
-    org:
-      springframework:
-        http:
-          conveter: DEBUG
-        web:
-          client: DEBUG
