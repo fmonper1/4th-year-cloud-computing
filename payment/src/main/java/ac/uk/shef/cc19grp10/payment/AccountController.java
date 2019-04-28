@@ -30,8 +30,7 @@ public class AccountController {
 
 		if (id == null) {
 			logger.info("No account ID provided, getting authenticated user's account");
-			account = accountRepo.findAccountByOwner(user)
-					.orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
+			account = user.getAccount();
 		} else {
 			logger.info("Account ID provided, getting accoun by ID");
 			account = accountRepo.findById(id)
