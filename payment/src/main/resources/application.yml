@@ -1,13 +1,21 @@
 server:
   error:
     include-stacktrace: always
+  servlet:
+    session:
+      cookie:
+        name: payment_microservice_cookie_name
 spring:
-  profiles:
-    active: dev
+  jmx:
+    default-domain: platform-payment
+  jpa:
+    hibernate:
+      ddl-auto: validate
   mvc:
     view:
       prefix: /WEB-INF/jsp/
       suffix: .jsp
-  jpa:
-    hibernate:
-      ddl-auto: validate
+  profiles:
+    active: dev
+payment:
+  platform_cut: 0.4

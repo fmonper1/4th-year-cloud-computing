@@ -12,7 +12,7 @@ import java.util.Set;
 public class Account {
 
     @JsonIgnore
-    private static final int INITIAL_USER_BALANCE = 500;
+    private static final int INITIAL_USER_BALANCE = 1000;
     @JsonIgnore
     private static final int INITIAL_APP_BALANCE = 0;
 
@@ -71,6 +71,7 @@ public class Account {
         return incomingTransactions;
     }
 
+    @JsonIgnore
     public Set<Transaction> getTransactions() {
         Set<Transaction> allTransactions = new HashSet<>();
         allTransactions.addAll(outgoingTransactions);
@@ -78,11 +79,15 @@ public class Account {
         return allTransactions;
     }
 
-    private Account(int initialBalance){
+    private Account(int initialBalance) {
+        this();
         this.balance = initialBalance;
     }
 
-    protected Account() {}
+    protected Account() {
+        this.incomingTransactions = new HashSet<>();
+        this.outgoingTransactions = new HashSet<>();
+    }
 
     public static Account newUserAccount() {
         return new Account(INITIAL_USER_BALANCE);

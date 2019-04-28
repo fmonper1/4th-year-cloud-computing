@@ -1,6 +1,7 @@
 package ac.uk.shef.cc19grp10.payment.data;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
@@ -42,11 +43,12 @@ public class Bill {
         this.transaction = transaction;
     }
 
-    public boolean getPaid() {
+    @JsonProperty("paid")
+    public boolean isPaid() {
         return this.transaction != null;
     }
 
-    private Bill(Account toAccount, int amount) {
+    public Bill(Account toAccount, int amount) {
         this.toAccount = toAccount;
         this.amount = amount;
     }

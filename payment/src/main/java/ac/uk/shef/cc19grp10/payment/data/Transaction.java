@@ -41,8 +41,10 @@ public class Transaction {
         return amount;
     }
 
-    private Transaction(Account from, Account to, int amount) {
-
+    public Transaction(Account from, Account to, int amount) {
+        this.fromAccount = from;
+        this.toAccount = to;
+        this.amount = amount;
     }
 
     protected Transaction() {}

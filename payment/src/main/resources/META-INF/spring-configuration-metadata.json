@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "payment.platform_cut",
+      "type": "java.lang.Float"
+    }
+  ]
+}
