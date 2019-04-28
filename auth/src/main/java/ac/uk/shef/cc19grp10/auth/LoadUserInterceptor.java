@@ -26,7 +26,7 @@ public class LoadUserInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle (HttpServletRequest request,
 							  HttpServletResponse response,
-							  Object handler) throws Exception {
+							  Object handler) {
 		Long userId = (Long) request.getSession().getAttribute("userId");
 		if(userId != null){
 			request.getSession().setAttribute("user",userRepo.findById(userId).orElse(null));

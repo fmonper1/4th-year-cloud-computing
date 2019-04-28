@@ -11,6 +11,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -29,6 +30,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.SocketAddress;
 import java.net.URI;
 import java.nio.file.FileSystems;
 import java.nio.file.PathMatcher;
@@ -72,7 +76,10 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 	private RestTemplate restTemplate;
 
 	public ApplicationManagementServiceImpl(){
-		restTemplate = new RestTemplate();
+		SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", 8888));
+		requestFactory.setProxy(proxy);
+		restTemplate = new RestTemplate(requestFactory);
 		restTemplate.setMessageConverters(Arrays.asList(new MappingJackson2HttpMessageConverter(), new FormHttpMessageConverter(), new StringHttpMessageConverter()));
 	}
 
@@ -127,7 +134,9 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 		//try create the auth part of the app
 		ResponseEntity<AuthApplication> res;
 		try {
-			res = restTemplate.postForEntity(authServletUrl + "developer/create?access_token={accessToken}", new CreateAuthApplicationRequest(application.getName(),redirectUri), AuthApplication.class, accessToken);
+			CreateAuthApplicationRequest createAuthApplicationRequest = new CreateAuthApplicationRequest(application.getName(), redirectUri);
+			logger.info("Sending createAuthApplicationRequest: {}",createAuthApplicationRequest);
+			res = restTemplate.postForEntity(authServletUrl + "developer/create?access_token={accessToken}", createAuthApplicationRequest, AuthApplication.class, accessToken);
 		}catch(HttpClientErrorException.BadRequest badReq){
 			logger.info("Bad request response body: {}", badReq.getResponseBodyAsString());
 			throw new ApiError();
@@ -257,6 +266,11 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 		public CreateAuthApplicationRequest(String applicationName, String redirectUri){
 			this.applicationName = applicationName;
 			this.redirectUri = redirectUri;
+		}
+
+		@Override
+		public String toString() {
+			return "CreateAuthApplicationRequest{applicationName="+applicationName+",redirectUri="+redirectUri+"}";
 		}
 	}
 }

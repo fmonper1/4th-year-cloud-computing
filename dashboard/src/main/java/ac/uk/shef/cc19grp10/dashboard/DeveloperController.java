@@ -41,7 +41,7 @@ public class DeveloperController {
 			@SessionAttribute("user") User user
 	) throws ApplicationManagementService.ApiError {
 
-		Application app = user.getApplication();
+		Application app = appRepo.findByOwner(user);
 		AuthApplication authApp = null;
 		DbApplication dbApp = null;
 		if(app != null) {
@@ -50,12 +50,6 @@ public class DeveloperController {
 			authApp = appManagement.getAuthApplication(user);
 		}
 
-		logger.info("app from user: {}",app);
-		
-		app = appRepo.findByOwner(user);
-
-		logger.info("app from repo: {}",app);
-
 		return new ModelAndView("developer/index")
 				.addObject("app",app)
 				.addObject("authApp",authApp)
@@ -63,7 +57,7 @@ public class DeveloperController {
 	}
 
 	@GetMapping("/upload")
-	public ModelAndView createApplication(
+	public ModelAndView deployApplication(
 			@ModelAttribute CreateDeploymentForm createDeploymentForm
 	)
 	{
@@ -95,7 +89,7 @@ public class DeveloperController {
 	}
 
 	@PostMapping("/upload")
-	public ModelAndView createApplication(
+	public ModelAndView deployApplication(
 			@ModelAttribute @Valid CreateDeploymentForm createDeploymentForm,
 			BindingResult bindingResult,
 			@SessionAttribute("user") User user
@@ -118,7 +112,7 @@ public class DeveloperController {
 					"createDeploymentForm",
 					"There was an error with the deployment api. Please report this to a member of team 1."
 			));
-			return new ModelAndView("developer/auth/create");
+			return new ModelAndView("developer/upload");
 		}
 		return new ModelAndView(new RedirectView("/developer"));
 	}
@@ -192,7 +186,6 @@ public class DeveloperController {
 		return new ModelAndView(new RedirectView("/developer"));
 	}
 
-	@FieldsMatch({"databasePassword","confirmDatabasePassword"})
 	public class CreateAuthApplicationForm{
 		@NotBlank
 		String redirectUri;

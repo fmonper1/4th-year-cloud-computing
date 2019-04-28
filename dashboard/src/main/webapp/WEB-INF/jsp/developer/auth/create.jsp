@@ -18,7 +18,6 @@
             <div class="col-4">
                 <form:form method="POST" modelAttribute="createAuthApplicationForm">
                     <form:errors cssClass="alert alert-danger" element="div"/>
-                    <my:bs-input path="applicationName" placeholder="Application Name" label="Application Name" type="text"/>
                     <my:bs-input path="redirectUri" placeholder="Redirect Uri" label="Redirect Uri" type="text"/>
                     <input type="submit" value="Create Application" class="btn btn-primary btn-block"/>
                 </form:form>

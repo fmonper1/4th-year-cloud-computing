@@ -53,7 +53,7 @@ public class DeveloperController {
 	@PostMapping("/create")
 	@ResponseBody
 	public ResponseEntity<Object> createApplication(
-			@ModelAttribute @Valid CreateApplicationForm createApplicationForm,
+			@RequestBody @Valid CreateApplicationForm createApplicationForm,
 			BindingResult bindingResult,
 			@FromAccessToken Authorisation auth
 	)
@@ -67,6 +67,7 @@ public class DeveloperController {
 			));
 		}
 		if(bindingResult.hasErrors()){
+			logger.error("Got bad createApplicationForm: {}",createApplicationForm);
 			return ResponseEntity.badRequest().body(new JsonErrors(bindingResult));
 		}
 		try {
@@ -103,7 +104,7 @@ public class DeveloperController {
 				.toLowerCase();
 	}
 
-	private class JsonError {
+	private static class JsonError {
 		@JsonProperty
 		String object;
 		@JsonProperty
@@ -119,7 +120,7 @@ public class DeveloperController {
 		}
 	}
 
-	private class JsonErrors {
+	private static class JsonErrors {
 		@JsonProperty
 		List<JsonError> errors = new ArrayList<>();
 		JsonErrors(BindingResult bindingResult) {
@@ -129,7 +130,7 @@ public class DeveloperController {
 		}
 	}
 
-	public class CreateApplicationForm{
+	public static class CreateApplicationForm{
 		@Size(min=5,max=28)
 		String applicationName;
 		@NotBlank
@@ -149,6 +150,11 @@ public class DeveloperController {
 
 		public void setRedirectUri(String redirectUri) {
 			this.redirectUri = redirectUri;
+		}
+
+		@Override
+		public String toString() {
+			return "CreateApplicationForm{applicationName="+applicationName+",redirectUri="+redirectUri+"}";
 		}
 	}
 }

@@ -18,7 +18,6 @@
             <div class="col-4">
                 <form:form method="POST" modelAttribute="createDbApplicationForm">
                     <form:errors cssClass="alert alert-danger" element="div"/>
-                    <my:bs-input path="applicationName" placeholder="Application Name" label="Application Name" type="text"/>
                     <my:bs-input path="databasePassword" placeholder="Database Password" label="Database Password" type="password"/>
                     <my:bs-input path="confirmDatabasePassword" placeholder="Confirm Database Password" label="Confirm Database Password" type="password"/>
                     <input type="submit" value="Create Application" class="btn btn-primary btn-block"/>
