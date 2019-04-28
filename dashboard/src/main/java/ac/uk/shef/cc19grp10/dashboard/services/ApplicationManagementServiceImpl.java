@@ -76,10 +76,7 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 	private RestTemplate restTemplate;
 
 	public ApplicationManagementServiceImpl(){
-		SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", 8888));
-		requestFactory.setProxy(proxy);
-		restTemplate = new RestTemplate(requestFactory);
+		restTemplate = new RestTemplate();
 		restTemplate.setMessageConverters(Arrays.asList(new MappingJackson2HttpMessageConverter(), new FormHttpMessageConverter(), new StringHttpMessageConverter()));
 	}
 
