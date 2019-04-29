@@ -35,7 +35,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		logger.info("uri: {}",request.getRequestURI());
 		logger.info("user: {}",user);
 		if (user == null) {
-			String state = request.getRequestURI();
+			String state = request.getRequestURI().substring(request.getContextPath().length());
 			String query = request.getQueryString();
 			if (query != null){
 				state += "?" + query;

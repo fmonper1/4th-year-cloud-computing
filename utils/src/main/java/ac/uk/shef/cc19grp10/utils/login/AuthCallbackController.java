@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -45,7 +47,7 @@ public class AuthCallbackController {
 	private String clientId;
 	@Value("${auth.client_secret}")
 	private String clientSecret;
-	@Value("${auth.auth_servlet_url:http://143.167.9.214:8080/auth}")
+	@Value("${auth.verify_servlet_url}")
 	private String authServletBase;
 
 	@Autowired
@@ -58,7 +60,7 @@ public class AuthCallbackController {
 	}
 
 	@GetMapping(params = "!error")
-	public String handleSuccess(@RequestParam("code") String authCode, @RequestParam("state") String state, HttpServletRequest request) throws UnsupportedEncodingException {
+	public ModelAndView handleSuccess(@RequestParam("code") String authCode, @RequestParam("state") String state, HttpServletRequest request) throws UnsupportedEncodingException {
 		logger.info("handleSuccess");
 		logger.info("authServletBase: {}", authServletBase);
 		TokenResponse tokenResponse;
@@ -78,14 +80,14 @@ public class AuthCallbackController {
 			ResponseEntity<TokenResponse> res = restTemplate.exchange(tokenRequest,TokenResponse.class);
 			logger.info("post for token done");
 			if (!res.getStatusCode().is2xxSuccessful()) {
-				return "AuthError";
+				return new ModelAndView("AuthError");
 			}
 			tokenResponse = res.getBody();
 			if (tokenResponse == null) {
-				return "AuthError";
+				return new ModelAndView("AuthError");
 			}
 			if (tokenResponse.error != null) {
-				return "AuthError";
+				return new ModelAndView("AuthError");
 			}
 		}
 		{
@@ -96,11 +98,11 @@ public class AuthCallbackController {
 			ResponseEntity<UserResponse> res = restTemplate.getForEntity(authServletBase+"/verify?client_id={client_id}&access_token={access_token}", UserResponse.class, variables);
 			logger.info("get for user done");
 			if (!res.getStatusCode().is2xxSuccessful()) {
-				return "AuthError";
+				return new ModelAndView("AuthError");
 			}
 			UserResponse userResponse = res.getBody();
 			if (userResponse == null) {
-				return "AuthError";
+				return new ModelAndView("AuthError");
 			}
 			Object user = userFactory.loadOrCreateUser(userResponse.id, userResponse.name, tokenResponse.accessToken);
 			logger.info("Setting user to: {}",user);
@@ -108,7 +110,7 @@ public class AuthCallbackController {
 		}
 		state = URLDecoder.decode(state,"UTF-8");
 		logger.info("Redirecting to: {}",state);
-		return "redirect:"+request.getContextPath()+state;
+		return new ModelAndView(new RedirectView(state,true));
 	}
 
 	@GetMapping

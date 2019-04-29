@@ -90,7 +90,7 @@ public class LoginController {
 
 		request.getSession().removeAttribute(LOGIN_REDIRECT_ATTR_NAME); // Remove if set
 
-		return new ModelAndView(new RedirectView(loginRedirect));
+		return new ModelAndView(new RedirectView(loginRedirect,true));
 	}
 
 	public class LoginForm {

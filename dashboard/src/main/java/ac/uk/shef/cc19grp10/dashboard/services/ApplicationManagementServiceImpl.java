@@ -80,7 +80,7 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 		restTemplate.setMessageConverters(Arrays.asList(new MappingJackson2HttpMessageConverter(), new FormHttpMessageConverter(), new StringHttpMessageConverter()));
 	}
 
-	@Value("${auth.auth_servlet_url}")
+	@Value("${auth.verify_servlet_url}")
 	private String authServletUrl;
 	private Logger logger = LoggerFactory.getLogger(ApplicationManagementServiceImpl.class);
 

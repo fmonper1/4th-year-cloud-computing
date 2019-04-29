@@ -52,7 +52,7 @@
                     <ul class="list-unstyled">
                         <li><a href="#" class="text-white">Profile</a></li>
                         <li><a href="#" class="text-white">Signout</a></li>
-                        <li><a href="/developer" class="text-white">Developer</a></li>
+                        <li><a href="<c:url value="/developer"/>" class="text-white">Developer</a></li>
                     </ul>
                 </div>
             </div>
