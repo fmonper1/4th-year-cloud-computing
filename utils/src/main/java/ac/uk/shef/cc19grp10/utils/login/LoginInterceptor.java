@@ -36,8 +36,12 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		logger.info("user: {}",user);
 		if (user == null) {
 			String state = request.getRequestURI();
+			String query = request.getQueryString();
+			if (query != null){
+				state += "?" + query;
+			}
 			HashMap<String,String> queryParams = new HashMap<>();
-			queryParams.put("state",state);
+			queryParams.put("state",URLEncoder.encode(state,"UTF-8"));
 			queryParams.put("redirect_uri", URLEncoder.encode(redirectUri,"UTF-8"));
 			queryParams.put("client_id",clientId);
 			String queryString = queryParams.entrySet().stream().map(entry -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.joining("&"));

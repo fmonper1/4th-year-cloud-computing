@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -56,7 +58,7 @@ public class AuthCallbackController {
 	}
 
 	@GetMapping(params = "!error")
-	public String handleSuccess(@RequestParam("code") String authCode, @RequestParam("state") String state, HttpServletRequest request){
+	public String handleSuccess(@RequestParam("code") String authCode, @RequestParam("state") String state, HttpServletRequest request) throws UnsupportedEncodingException {
 		logger.info("handleSuccess");
 		logger.info("authServletBase: {}", authServletBase);
 		TokenResponse tokenResponse;
@@ -104,6 +106,7 @@ public class AuthCallbackController {
 			logger.info("Setting user to: {}",user);
 			request.getSession().setAttribute("user",user);
 		}
+		state = URLDecoder.decode(state,"UTF-8");
 		logger.info("Redirecting to: {}",state);
 		return "redirect:"+request.getContextPath()+state;
 	}
