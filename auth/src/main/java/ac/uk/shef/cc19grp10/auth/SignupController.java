@@ -76,9 +76,7 @@ public class SignupController {
 		//remove redirect if set
 		request.getSession().removeAttribute("loginRedirect");
 
-		RedirectView redirectView = new RedirectView(loginRedirect);
-		redirectView.setPropagateQueryParams(true);
-		return new ModelAndView(redirectView);
+		return new ModelAndView(new RedirectView(loginRedirect,true));
 	}
 
 	@FieldsMatch({"password","confirmPassword"})

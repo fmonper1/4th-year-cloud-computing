@@ -33,7 +33,7 @@
                             </c:when>
                             <c:otherwise>
                                 <h1>You have not setup your database:</h1>
-                                <a href="/developer/db/create" class="btn btn-primary btn-block">Create database</a>
+                                <a href="db/create" class="btn btn-primary btn-block">Create database</a>
                             </c:otherwise>
                         </c:choose>
                         <c:choose>
@@ -54,15 +54,15 @@
                             </c:when>
                             <c:otherwise>
                                 <h1>You have not setup authentication:</h1>
-                                <a href="/developer/auth/create" class="btn btn-primary btn-block">Create authentication credentials</a>
+                                <a href="auth/create" class="btn btn-primary btn-block">Create authentication credentials</a>
                             </c:otherwise>
                         </c:choose>
                         <h1>Deployment</h1>
-                        <a href="/developer/upload" class="btn btn-primary btn-block">Deploy your application</a>
+                        <a href="./upload" class="btn btn-primary btn-block">Deploy your application</a>
                     </c:when>
                     <c:otherwise>
                         <h1>You have not created an application:</h1>
-                        <a href="/developer/create" class="btn btn-primary btn-block">Create application</a>
+                        <a href="./create" class="btn btn-primary btn-block">Create application</a>
                     </c:otherwise>
                 </c:choose>
             </div>
