@@ -1,8 +1,8 @@
-package hello.repositories;
+package ac.uk.shef.cc19grp10.bookswap.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 
-import hello.models.User;
+import ac.uk.shef.cc19grp10.bookswap.models.User;
 
 // This will be AUTO IMPLEMENTED by Spring into a Bean called userRepository
 // CRUD refers Create, Read, Update, Delete

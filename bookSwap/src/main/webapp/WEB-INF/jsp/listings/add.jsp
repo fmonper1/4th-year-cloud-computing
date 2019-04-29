@@ -16,6 +16,12 @@
             <td><form:input path="description"/></td>
         </tr>
         <tr>
+            <td><form:label path="moduleCode">Module Code</form:label></td>
+            <td><form:input path="moduleCode"/></td>
+
+        </tr>
+
+        <tr>
             <td><input type="submit" value="Submit"/></td>
         </tr>
     </table>

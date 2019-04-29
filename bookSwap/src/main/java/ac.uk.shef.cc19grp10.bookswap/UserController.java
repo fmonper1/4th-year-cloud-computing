@@ -1,7 +1,7 @@
-package hello;
+package ac.uk.shef.cc19grp10.bookswap;
 
-import hello.models.Listing;
-import hello.repositories.ListingRepository;
+import ac.uk.shef.cc19grp10.bookswap.models.Listing;
+import ac.uk.shef.cc19grp10.bookswap.repositories.ListingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import hello.models.User;
-import hello.repositories.UserRepository;
+import ac.uk.shef.cc19grp10.bookswap.models.User;
+import ac.uk.shef.cc19grp10.bookswap.repositories.UserRepository;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
@@ -51,7 +51,8 @@ public class UserController	 {
 	public ModelAndView showListings() {
 		listings.clear();
 
-		listingRepository.findAll().forEach(listings::add);
+//		listingRepository.findAll().forEach(listings::add);
+		listingRepository.findByUserId(1).forEach(listings::add);
 		return new ModelAndView("users/listings", "listings", listings);
 	}
 
