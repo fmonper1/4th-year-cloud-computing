@@ -1,5 +1,7 @@
-package hello;
+package ac.uk.shef.cc19grp10.bookswap;
 
+
+import ac.uk.shef.cc19grp10.bookswap.models.Comment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +11,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import hello.models.Listing;
-import hello.repositories.ListingRepository;
+import ac.uk.shef.cc19grp10.bookswap.models.Listing;
+import ac.uk.shef.cc19grp10.bookswap.repositories.ListingRepository;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -33,10 +35,13 @@ public class ListingController	 {
 	public ModelAndView displayListing(@PathVariable(value="id")Integer id, ModelMap model) {
 		Listing listing = listingRepository.findById(id).orElse(null);
 
-		model.addAttribute("title", listing.getTitle());
-		model.addAttribute("description", listing.getDescription());
-		model.addAttribute("id", listing.getId());
-		return new ModelAndView("listings/view","listing", model);
+//		model.addAttribute("title", listing.getTitle());
+//		model.addAttribute("description", listing.getDescription());
+//		model.addAttribute("id", listing.getId());
+
+		model.addAttribute("listing", listing);
+		model.addAttribute("comment", new Comment());
+		return new ModelAndView("listings/view", model);
 	}
 
     /**
@@ -49,6 +54,20 @@ public class ListingController	 {
 		model.addAttribute("listing", listing);
 		return new ModelAndView("listings/update","listing", listing);
 	}
+
+	/**
+	 This route is used to view the details for a listing
+	 */
+	@RequestMapping(path = "/{id}/close", method = RequestMethod.GET)
+	public RedirectView markAsClosed(@PathVariable(value="id")Integer id, ModelMap model) {
+		Listing listing = listingRepository.findById(id).orElse(null);
+
+		listing.setClosed(Boolean.TRUE);
+		listingRepository.save(listing);
+
+		return new RedirectView("redirect:/"+id+"/view");
+	}
+
 
 	@RequestMapping(path = "/{id}/update", method = RequestMethod.POST)
 	public RedirectView submitUpdateListing(@PathVariable(value="id")Integer id, @Valid @ModelAttribute("listing")Listing listing, BindingResult result, ModelMap model) {
@@ -63,8 +82,7 @@ public class ListingController	 {
 
 	@RequestMapping(path="/add", method = RequestMethod.GET) // Map ONLY GET Requests
     public ModelAndView showForm() {
-        return new ModelAndView("listings/add", "listing", new Listing());
-    }
+        return new ModelAndView("listings/add", "listing", new Listing()); }
 
 	@RequestMapping(path="/add", method = RequestMethod.POST) // Map ONLY GET Requests
 	public String submit(@Valid @ModelAttribute("listing")Listing listing,

@@ -26,3 +26,4 @@ HELP.md
 /dist/
 /nbdist/
 /.nb-gradle/
+.vscode/settings.json

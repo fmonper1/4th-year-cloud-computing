@@ -1,6 +1,7 @@
-package hello;
-import hello.models.Listing;
-import hello.repositories.ListingRepository;
+package ac.uk.shef.cc19grp10.bookswap;
+
+import ac.uk.shef.cc19grp10.bookswap.models.Listing;
+import ac.uk.shef.cc19grp10.bookswap.repositories.ListingRepository;
 
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class MainController {
     private ListingRepository listingRepository;
 
     private static List<Listing> listings = new ArrayList<Listing>();
+    private static List<Listing> searchResults = new ArrayList<Listing>();
 
     @GetMapping(value = { "/", "/index" })
     public String index(Model model) {
@@ -32,6 +34,19 @@ public class MainController {
         model.addAttribute("listings", listings);
 
         return "index";
+    }
+
+    @GetMapping("/search")
+    public String search(@RequestParam(name="parameter", required=false, defaultValue="World") String parameter, Model model) {
+        searchResults.clear();
+
+        listingRepository.findByTitleOrModule(parameter).forEach(searchResults::add);
+
+        String message = "this is a message";
+        model.addAttribute("message", message);
+        model.addAttribute("listings", searchResults);
+
+        return "search";
     }
 
     @GetMapping("/greeting")

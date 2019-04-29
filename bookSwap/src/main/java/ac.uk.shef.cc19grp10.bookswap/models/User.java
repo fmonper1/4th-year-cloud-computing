@@ -1,7 +1,10 @@
-package hello.models;
+package ac.uk.shef.cc19grp10.bookswap.models;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity(name = "User") // This tells Hibernate to make a table out of this class
@@ -9,7 +12,7 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long id;
+	private Integer id;
 
     private String name;
 
@@ -22,11 +25,11 @@ public class User {
 		this.email = email;
 	}
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -46,14 +49,16 @@ public class User {
 		this.email = email;
 	}
 
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-	private Set<Listing> listings;
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private List<Listing> listings;
 
-	public Set<Listing> getListings() {
+	public List<Listing> getListings() {
 		return listings;
 	}
 
-	public void setListings(Set<Listing> listings) {
+	public void setListings(List<Listing> listings) {
 		this.listings = listings;
 	}
 }

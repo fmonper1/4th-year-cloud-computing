@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!doctype html>
 <html lang="en">
   <head>
@@ -115,13 +114,21 @@
                 </div>
               </nav>
 
-            <div class="d-flex align-items-center p-3 my-3 text-white-50 bg-purple rounded shadow-sm">
-              <img class="mr-3" src="img/speech-bubbles-comment-option.svg" alt="" width="48" height="48">
-              <div class="lh-100">
-                <h6 class="mb-0 text-white lh-100">Latest Trade Offers</h6>
-                <small>Trade books directly with other students.</small>
-              </div>
+            <div class="d-flex align-items-center p-3 my-3 text-white-50 bg-blue rounded shadow-sm">
+                <img class="mr-3" src="img/package.svg" alt="" width="48" height="48">
+                <div class="lh-100">
+                    <h6 class="mb-0 text-white lh-100">Search for specific items</h6>
+                    <small>Trade books directly with other students.</small>
+                </div>
             </div>
+            <form:form method="GET" action="/search" >
+                <div class="input-group mb-3">
+                    <input name="parameter" type="text" class="form-control form-control-lg" placeholder="Search by title, author or editorial" aria-label="Book Name" aria-describedby="button-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search</button>
+                    </div>
+                </div>
+            </form:form>
 
             <div class="my-3 p-3 bg-white rounded shadow-sm">
               <!-- <h6 class="border-bottom border-gray pb-2 mb-0">Recent updates</h6> -->
@@ -144,22 +151,9 @@
               </small>
             </div>
           
-            <div class="d-flex align-items-center p-3 my-3 text-white-50 bg-blue rounded shadow-sm">
-              <img class="mr-3" src="img/package.svg" alt="" width="48" height="48">
-              <div class="lh-100">
-                <h6 class="mb-0 text-white lh-100">Search for specific items</h6>
-                <small>Trade books directly with other students.</small>
-              </div>
-            </div>
-            <form:form method="GET" action="/search" >
-          <div class="input-group mb-3">
-              <input name="parameter" type="text" class="form-control form-control-lg" placeholder="Search by title, author or editorial" aria-label="Book Name" aria-describedby="button-addon2">
-              <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search</button>
-              </div>
-            </div>
-            </form:form>
           </main>
+
+
 
 <footer class="text-muted">
   <div class="container">
