@@ -13,8 +13,6 @@ public class Account extends BaseEntity {
 
     @JsonIgnore
     private static final int INITIAL_USER_BALANCE = 1000;
-    @JsonIgnore
-    private static final int INITIAL_APP_BALANCE = 0;
 
     private int balance;
 
@@ -82,10 +80,7 @@ public class Account extends BaseEntity {
     }
 
     public static Account newUserAccount() {
+        // A similar method could be implemented if we wanted to start differentiating applications from users.
         return new Account(INITIAL_USER_BALANCE);
-    }
-
-    public static Account newApplicationAccount() {
-        return new Account(INITIAL_APP_BALANCE);
     }
 }
