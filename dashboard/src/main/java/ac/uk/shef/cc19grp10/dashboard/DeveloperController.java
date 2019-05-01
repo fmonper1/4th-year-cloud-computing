@@ -95,7 +95,7 @@ public class DeveloperController {
 			@SessionAttribute("user") User user
 	)
 	{
-		Application application = user.getApplication();
+		Application application = appRepo.findByOwner(user);
 		if(application == null){
 			bindingResult.addError(new ObjectError("createDeploymentForm","You must create the parent application first"));
 		}

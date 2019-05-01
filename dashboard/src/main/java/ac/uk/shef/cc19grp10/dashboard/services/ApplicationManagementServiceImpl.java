@@ -153,7 +153,7 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 
 		String bestImagePath = findBestImagePath(clientId);
 
-		Deployment deployment = application.getDeployment();
+		Deployment deployment = deploymentRepo.findByApplication(application);
 		if (deployment == null){
 			deployment = new Deployment(url,bestImagePath,application);
 		}else{

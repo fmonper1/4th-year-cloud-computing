@@ -8,4 +8,5 @@ import org.springframework.data.repository.CrudRepository;
  * Created on 21/04/2019.
  */
 public interface DeploymentRepository extends CrudRepository<Deployment,Long> {
+    Deployment findByApplication(Application application);
 }
