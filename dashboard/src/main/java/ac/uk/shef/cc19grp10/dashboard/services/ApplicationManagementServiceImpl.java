@@ -122,7 +122,7 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 		try {
 			CreateAuthApplicationRequest createAuthApplicationRequest = new CreateAuthApplicationRequest(application.getName(), redirectUri);
 			logger.info("Sending createAuthApplicationRequest: {}",createAuthApplicationRequest);
-			res = restTemplate.postForEntity(authServletUrl + "developer/create?access_token={accessToken}", createAuthApplicationRequest, AuthApplication.class, accessToken);
+			res = restTemplate.postForEntity(authServletUrl + "/developer/create?access_token={accessToken}", createAuthApplicationRequest, AuthApplication.class, accessToken);
 		}catch(HttpClientErrorException.BadRequest badReq){
 			logger.info("Bad request response body: {}", badReq.getResponseBodyAsString());
 			throw new ApiError();
@@ -153,7 +153,14 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 
 		String bestImagePath = findBestImagePath(clientId);
 
-		return deploymentRepo.save(new Deployment(url,bestImagePath,application));
+		Deployment deployment = application.getDeployment();
+		if (deployment == null){
+			deployment = new Deployment(url,bestImagePath,application);
+		}else{
+			deployment.setImagePath(bestImagePath);
+		}
+
+		return deploymentRepo.save(deployment);
 	}
 
 	private String findBestImagePath(String clientId) {

@@ -28,7 +28,7 @@ public class Configuration implements WebMvcConfigurer {
 		//setup login interceptor from utils
 		//(note that /auth/callback and /auth are the minimum ignored paths for login to work correctly)
 		registry.addInterceptor(loginInterceptorBean())
-				.excludePathPatterns("/","/auth/callback","/error","/debug/**","/resources/**");
+				.excludePathPatterns("/","/auth/callback","/error","/debug/**","/resources/**","/api/**");
 	}
 
 

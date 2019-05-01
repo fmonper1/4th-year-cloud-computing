@@ -31,12 +31,20 @@ public class ApplicationDataController {
 
     @GetMapping("{id}/image")
     public void index(@PathVariable("id") long id, HttpServletResponse response) throws IOException {
+		logger.info("Loading image, id: {}",id);
 		Application app = appRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 		Deployment deployment = app.getDeployment();
+		logger.info("Loading image, deployment: {}",deployment);
 		if(deployment == null){
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 		}
-		File file = new File(deployment.getImagePath());
+		String imagePath = deployment.getImagePath();
+		logger.info("Loading image, path: {}",imagePath);
+		if (imagePath == null) {
+			imagePath = getClass().getClassLoader().getResource("img/default_image.svg").getPath();
+			logger.info("Loading image, path: {}",imagePath);
+		}
+		File file = new File(imagePath);
 		FileInputStream fileInputStream = new FileInputStream(file);
 		IOUtils.copy(fileInputStream,response.getOutputStream());
 		response.flushBuffer();
