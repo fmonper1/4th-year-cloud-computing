@@ -50,19 +50,6 @@ public class DeveloperController {
 		return app;
 	}
 
-	@GetMapping("/dummy")
-	public Object dummy(
-			@RequestParam("redirect_uri") String redirect,
-			@RequestParam("app_name") String appName,
-			@RequestParam(value = "username", required = false, defaultValue = "user") String username
-	) throws ApplicationManagement.ApplicationExistsError {
-		return appManagement.createApplication(
-				redirect,
-				appName,
-				userRepository.findByName(username)
-		);
-	}
-
 	@PostMapping("/create")
 	@ResponseBody
 	public ResponseEntity<Object> createApplication(
