@@ -14,7 +14,7 @@ public class Configuration implements WebMvcConfigurer {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(loginInterceptorBean())
-				.excludePathPatterns("/", "/auth/callback", "/error", "/bill");
+				.excludePathPatterns("/", "/auth/callback", "/error", "/api/**");
 	}
 
 	@Override

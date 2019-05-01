@@ -3,7 +3,6 @@ package ac.uk.shef.cc19grp10.payment.services;
 import ac.uk.shef.cc19grp10.payment.data.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -66,14 +65,13 @@ public class TransactionManagementImpl implements TransactionManagement {
             throw new InsufficientFundsError();
         }
 
-        logger.info("fromAccount = {} with id {}", fromAccount, fromAccount.getId());
-
+        Transaction paymentTransaction = new Transaction(fromAccount, toAccount, amount);
         Account.transfer(fromAccount, toAccount, amount);
-        Transaction transaction = new Transaction(fromAccount, toAccount, amount);
 
-        logger.info("transaction.getFromAccount() = {}", transaction.getFromAccount());
-        logger.info("transaction.getFromAccount().getId() = {}", transaction.getFromAccount());
+        accountRepo.save(fromAccount);
+        accountRepo.save(toAccount);
+        transactionRepo.save(paymentTransaction);
 
-        return transactionRepo.save(transaction);
+        return paymentTransaction;
     }
 }

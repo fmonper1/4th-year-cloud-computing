@@ -57,6 +57,8 @@ public class UserFactoryImpl implements UserFactory {
         newAccount.setOwner(newUser);
         accountRepo.save(newAccount);
 
+        newUser.setAccount(newAccount); // TODO check if there is a better way to do this
+
         return newUser;
     }
 }

@@ -9,4 +9,5 @@ auth:
   auth_servlet_url: http://localhost:8081
   client_id: app_developer
   client_secret: MbBVWtfMOJHXk4FS0uotKiF6c5mBy8LzXGKLm0vMl3U=
+  verify_servlet_url: http://localhost:8081
   redirect_uri: http://localhost:8080/auth/callback

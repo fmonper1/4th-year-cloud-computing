@@ -1,4 +1,4 @@
-package ac.uk.shef.cc19grp10.payment;
+package ac.uk.shef.cc19grp10.payment.controllers;
 
 import ac.uk.shef.cc19grp10.payment.data.*;
 import ac.uk.shef.cc19grp10.payment.services.TransactionManagement;
@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
@@ -32,41 +31,27 @@ public class BillController {
 	@Autowired
 	TransactionManagement transactionManagement;
 
-	@PostMapping
-	public @ResponseBody Object createBill(
-			@RequestParam(value = "toAccount") long accountId,
-			@RequestParam(value = "amount") int amount
-	) {
-		Account toAccount = accountRepo.findById(accountId)
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-		return billRepo.save(new Bill(toAccount, amount));
-	}
-
-	@GetMapping("/{billId}")
+	@GetMapping("/{billId}/pay")
 	public ModelAndView getPayBill(
 			@PathVariable long billId,
-			@RequestParam(value = "callbackUri") String callback,
-			@RequestParam(value = "state", required = false) String state,
-			@SessionAttribute("user") User user
+			@RequestParam(value = "callbackUri") String callback
 	) throws URISyntaxException {
 		Bill bill = billRepo.findById(billId)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
 		if (bill.isPaid()) {
-			return completePaymentSuccess(callback, state);
+			return completePaymentSuccess(callback);
 		}
 
 		return new ModelAndView("payBill", "bill", bill);
 	}
 
-	@PostMapping("/{billId}")
+	@PostMapping("/{billId}/pay")
 	public ModelAndView postPayBill(
 			@Valid BillForm billForm,
 			@SessionAttribute("user") User user,
 			@PathVariable long billId,
-			@RequestParam(value = "callbackUri") String callback,
-			@RequestParam(value = "state", required = false) String state
+			@RequestParam(value = "callbackUri") String callback
 	) throws URISyntaxException {
 		Map<String, Object> model = new HashMap<>();
 
@@ -74,7 +59,7 @@ public class BillController {
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
 		if (bill.isPaid()) {
-			return completePaymentSuccess(callback, state);
+			return completePaymentSuccess(callback);
 		}
 
 		model.put("bill", bill);
@@ -89,27 +74,21 @@ public class BillController {
 				return new ModelAndView("payBill", model);
 			}
 
-			return completePaymentSuccess(callback, state);
+			return completePaymentSuccess(callback);
 		} else if (billForm.getAccept() != null && billForm.getAccept().equals("no")) {
-			return completePaymentFailed(callback, state);
+			return completePaymentFailed(callback);
 		} else {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 		}
 	}
 
-	private ModelAndView completePaymentFailed(String redirect, String state) throws URISyntaxException {
+	private ModelAndView completePaymentFailed(String redirect) throws URISyntaxException {
 		String authParams = "success=0";
-		if (state != null) {
-			authParams += "&state=" + state;
-		}
 		return completeAuthorisation(redirect, authParams);
 	}
 
-	private ModelAndView completePaymentSuccess(String redirect, String state) throws URISyntaxException {
+	private ModelAndView completePaymentSuccess(String redirect) throws URISyntaxException {
 		String authParams = "success=1";
-		if (state != null) {
-			authParams += "&state=" + state;
-		}
 		return completeAuthorisation(redirect, authParams);
 	}
 
