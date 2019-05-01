@@ -1,11 +1,12 @@
 package ac.uk.shef.cc19grp10.bookswap;
 
+import ac.uk.shef.cc19grp10.bookswap.data.DbUserFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-//import ac.uk.shef.cc19grp10.utils.login.LoginInterceptor;
-//import ac.uk.shef.cc19grp10.utils.login.UserFactory;
+import ac.uk.shef.cc19grp10.utils.login.LoginInterceptor;
+import ac.uk.shef.cc19grp10.utils.login.UserFactory;
 
 /**
  * <Doc here>
@@ -23,25 +24,25 @@ public class Configuration implements WebMvcConfigurer {
 				.addResourceLocations("/resources/");
 	}
 
-//	@Override
-//	public void addInterceptors(InterceptorRegistry registry) {
-//		//setup login interceptor from utils
-//		//(note that /auth/callback and /auth are the minimum ignored paths for login to work correctly)
-//		registry.addInterceptor(loginInterceptorBean())
-//				.excludePathPatterns("/","/auth/callback","/error"/* add any other urls that need to be accessible withouh loggin in here*/);
-//	}
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		//setup login interceptor from utils
+		//(note that /auth/callback and /auth are the minimum ignored paths for login to work correctly)
+		registry.addInterceptor(loginInterceptorBean())
+				.excludePathPatterns("/","/auth/callback","/error"/* add any other urls that need to be accessible withouh loggin in here*/);
+	}
 
 
-//	//required for login system from utils
-//	@Bean
-//	LoginInterceptor loginInterceptorBean(){
-//		return new LoginInterceptor();
-//	}
-//
-//	//required for login system from utils
-//	@Bean
-//	UserFactory userFactory(){
-//		return /*Rutrn and instance of UserFactory here*/
-//	}
+	//required for login system from utils
+	@Bean
+	LoginInterceptor loginInterceptorBean(){
+		return new LoginInterceptor();
+	}
+
+	//required for login system from utils
+	@Bean
+	UserFactory userFactory(){
+		return new DbUserFactory(); /*Rutrn and instance of UserFactory here*/
+	}
 
 }
