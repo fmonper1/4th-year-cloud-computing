@@ -91,7 +91,7 @@ public class AuthController {
 		return completeAuthorisationSuccess(authorisation,redirect,state);
 	}
 	private ModelAndView completeAuthorisationSuccess(Authorisation authorisation, String redirect, String state) throws URISyntaxException {
-		String authParams = "code="+authorisation.getAuthCodeEncoded();;
+		String authParams = "code="+authorisation.getAuthCodeEncoded();
 		if (state != null){
 			authParams += "&state=" + state;
 		}
@@ -106,11 +106,6 @@ public class AuthController {
 			redirect += "&";
 		}
 		redirect += authParams;
-		//test if the uri has a scheme
-		if (!redirect.matches("([a-zA-z0-9+\\-.])*://.*")){
-			//if not use the empty scheme, which means use the current scheme
-			redirect = "://"+redirect;
-		}
 		return new ModelAndView(new RedirectView(redirect,false));
 	}
 

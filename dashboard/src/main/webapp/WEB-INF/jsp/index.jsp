@@ -16,8 +16,14 @@
             <h1 class="jumbotron-heading">Student Cloud Suite</h1>
             <p class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don’t simply skip over it entirely.</p>
             <p>
-                <a href="#" class="btn btn-primary my-2">Signup</a>
-                <a href="#" class="btn btn-secondary my-2">Login</a>
+                <c:choose>
+                    <c:when test="${user != null}">
+                        Hello ${username}!
+                    </c:when>
+                    <c:otherwise>
+                        <a href="<c:url value="/login"/>" class="btn btn-primary my-2">Signup or login</a>
+                    </c:otherwise>
+                </c:choose>
             </p>
         </div>
     </section>
@@ -35,7 +41,6 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="btn-group">
                                         <a type="button" class="btn btn-sm btn-outline-secondary" href="${app.url}">Launch</a>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary">More info</button>
                                     </div>
                                 </div>
                             </div>

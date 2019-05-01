@@ -27,6 +27,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 
 /**
@@ -108,7 +109,7 @@ public class AuthCallbackController {
 			logger.info("Setting user to: {}",user);
 			request.getSession().setAttribute("user",user);
 		}
-		state = URLDecoder.decode(state,"UTF-8");
+		state = new String(Base64.getUrlDecoder().decode(state));
 		logger.info("Redirecting to: {}",state);
 		return new ModelAndView(new RedirectView(state,true));
 	}

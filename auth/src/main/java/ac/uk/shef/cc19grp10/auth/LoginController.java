@@ -26,7 +26,6 @@ public class LoginController {
 
 	private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-	private static final String DEFAULT_SUCCESS_REDIRECT = "/auth";
 	private static final String LOGIN_REDIRECT_ATTR_NAME = "loginRedirect";
 
 	@Autowired
@@ -83,12 +82,12 @@ public class LoginController {
 		HttpSession session = request.getSession();
 
 		String loginRedirect = (String) session.getAttribute(LOGIN_REDIRECT_ATTR_NAME);
+		//does not throw if not set
+		request.getSession().removeAttribute(LOGIN_REDIRECT_ATTR_NAME);
 
 		if (loginRedirect == null) {
-			loginRedirect = DEFAULT_SUCCESS_REDIRECT;
+			return new ModelAndView(new RedirectView("/",true));
 		}
-
-		request.getSession().removeAttribute(LOGIN_REDIRECT_ATTR_NAME); // Remove if set
 
 		return new ModelAndView(new RedirectView(loginRedirect,true));
 	}

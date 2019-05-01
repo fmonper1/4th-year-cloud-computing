@@ -9,6 +9,8 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -41,8 +43,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 				state += "?" + query;
 			}
 			HashMap<String,String> queryParams = new HashMap<>();
-			queryParams.put("state",URLEncoder.encode(state,"UTF-8"));
-			queryParams.put("redirect_uri", URLEncoder.encode(redirectUri,"UTF-8"));
+			queryParams.put("state", Base64.getUrlEncoder().encodeToString(state.getBytes()));
+			queryParams.put("redirect_uri", URLEncoder.encode(redirectUri, StandardCharsets.UTF_8.name()));
 			queryParams.put("client_id",clientId);
 			String queryString = queryParams.entrySet().stream().map(entry -> entry.getKey() + "=" + entry.getValue()).collect(Collectors.joining("&"));
 			response.sendRedirect(authServletBase+"/auth?"+queryString);
