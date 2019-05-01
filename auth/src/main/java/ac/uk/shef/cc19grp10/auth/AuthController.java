@@ -13,6 +13,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/auth")
@@ -105,7 +106,12 @@ public class AuthController {
 			redirect += "&";
 		}
 		redirect += authParams;
-		return new ModelAndView("redirect:"+redirect);
+		//test if the uri has a scheme
+		if (!redirect.matches("([a-zA-z0-9+\\-.])*://.*")){
+			//if not use the empty scheme, which means use the current scheme
+			redirect = "://"+redirect;
+		}
+		return new ModelAndView(new RedirectView(redirect,false));
 	}
 
 	public class AuthForm{

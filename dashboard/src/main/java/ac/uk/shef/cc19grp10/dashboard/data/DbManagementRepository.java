@@ -1,7 +1,4 @@
-package ac.uk.shef.cc19grp10.auth.data;
-
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+package ac.uk.shef.cc19grp10.dashboard.data;
 
 /**
  * <Doc here>

@@ -9,7 +9,7 @@
 <div class="form-group">
     <spring:bind path="${path}">
         <form:label path="${path}">${label}</form:label>
-        <form:input class="form-control ${status.error ? 'is-invalid' : ''}" path="${path}" placeholder="${placeholder}" type="${type}"/>
+        <form:input class="${type == 'file'? 'form-control-file': 'form-control' } ${status.error ? 'is-invalid' : ''}" path="${path}" placeholder="${placeholder}" type="${type}"/>
         <form:errors path="${path}" cssClass="invalid-feedback" element="div" />
     </spring:bind>
 </div>

@@ -6,18 +6,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.validation.Valid;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.TemporalAmount;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
@@ -68,7 +65,7 @@ public class TokenController {
 		}
 
 		if (!authorisation.getApplication().checkEncodedClientSecret(clientSecret)){
-			logger.info("Authorisation client secrets don't match, expected: {}",authorisation.getApplication().getEncodedClientSecret());
+			logger.info("Authorisation client secrets don't match, expected: {}, but got: {}",authorisation.getApplication().getEncodedClientSecret(),clientSecret);
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"invalid_request");
 		}
 

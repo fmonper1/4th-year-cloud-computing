@@ -1,11 +1,9 @@
 package ac.uk.shef.cc19grp10.auth;
 
-import ac.uk.shef.cc19grp10.auth.data.User;
 import ac.uk.shef.cc19grp10.auth.data.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -28,7 +26,7 @@ public class LoadUserInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle (HttpServletRequest request,
 							  HttpServletResponse response,
-							  Object handler) throws Exception {
+							  Object handler) {
 		Long userId = (Long) request.getSession().getAttribute("userId");
 		if(userId != null){
 			request.getSession().setAttribute("user",userRepo.findById(userId).orElse(null));

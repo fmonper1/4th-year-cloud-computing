@@ -4,40 +4,74 @@ import javax.persistence.*;
 
 @Entity
 public class Application {
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-	private String url;
-	private String imagePath;
+  @Id
+  @GeneratedValue(strategy= GenerationType.IDENTITY)
+  private Long id;
+  private String name;
 	private String description;
+
+	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE}, optional = false)
+	private User owner;
+
+	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE}, orphanRemoval = true, mappedBy = "application")
+	private Deployment deployment;
+
+	@OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE}, orphanRemoval = true, mappedBy = "application")
+	private DbApplication dbApplication;
 
 	protected Application(){}
 
-	public Application(String name, String url, String imagePath,String description){
+	public Application(String name,String description, User owner){
 		this.name = name;
-		this.url = url;
-		this.imagePath = imagePath;
 		this.description = description;
+		this.owner = owner;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public String getUrl() {
-		return url;
-	}
-
-	public String getImagePath() {
-		return imagePath;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
-	public long getId() {
-		return id;
+	public void setDescription(String description) {
+		this.description = description;
+	}
+  
+	public User getOwner() {
+		return owner;
+	}
+
+	public void setOwner(User owner) {
+		this.owner = owner;
+	}
+
+	public Deployment getDeployment() {
+		return deployment;
+	}
+
+	public void setDeployment(Deployment deployment) {
+		this.deployment = deployment;
+	}
+
+	public DbApplication getDbApplication() {
+		return dbApplication;
+	}
+
+	public void setDbApplication(DbApplication dbApplication) {
+		this.dbApplication = dbApplication;
 	}
 }

@@ -1,36 +1,26 @@
 package ac.uk.shef.cc19grp10.auth;
 
-import ac.uk.shef.cc19grp10.auth.data.Application;
 import ac.uk.shef.cc19grp10.auth.data.ApplicationRepository;
 import ac.uk.shef.cc19grp10.auth.data.User;
 import ac.uk.shef.cc19grp10.auth.data.UserRepository;
 import ac.uk.shef.cc19grp10.auth.security.HashingStrategy;
-import ac.uk.shef.cc19grp10.auth.validation.FieldsMatch;
-import com.fasterxml.jackson.core.JsonFactory;
+import ac.uk.shef.cc19grp10.utils.validation.FieldsMatch;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.io.JsonStringEncoder;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hibernate.validator.constraints.ScriptAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * <Doc here>
@@ -86,9 +76,7 @@ public class SignupController {
 		//remove redirect if set
 		request.getSession().removeAttribute("loginRedirect");
 
-		RedirectView redirectView = new RedirectView(loginRedirect);
-		redirectView.setPropagateQueryParams(true);
-		return new ModelAndView(redirectView);
+		return new ModelAndView(new RedirectView(loginRedirect,true));
 	}
 
 	@FieldsMatch({"password","confirmPassword"})

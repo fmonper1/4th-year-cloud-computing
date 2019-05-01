@@ -1,0 +1,3 @@
+#password is dashboard_owner_pw
+INSERT INTO `user` (`id`,`name`,`pw_hash`,`salt`) VALUES (1,'dashboard_owner_account',FROM_BASE64('JA1P4izk4iMePJhD+O+nCA=='),FROM_BASE64('7YDIAAVM/fbm1vp/VntYEg=='));
+INSERT INTO `application` (`client_id`,`name`,`client_secret`,`redirect_uri`,`owner_id`) VALUES ('dashboard','Dashboard',FROM_BASE64('AYAMtwaAfigOozcZhGLtC9xj5Hz4+rzxDgGc72waX5o='),'/dashboard/auth/callback',1)
