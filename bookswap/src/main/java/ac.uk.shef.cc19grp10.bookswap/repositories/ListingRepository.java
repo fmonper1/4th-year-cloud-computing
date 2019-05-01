@@ -24,4 +24,7 @@ public interface ListingRepository extends CrudRepository<Listing, Integer> {
     @Query("FROM Listing l WHERE l.title LIKE %?1% OR l.moduleCode LIKE %?1%")
     public Iterable<Listing> findByTitleOrModule(String searchParam);
 
+    @Query("FROM Listing l WHERE l.moduleCode LIKE %?1%")
+    public Iterable<Listing> findByModule(String searchParam);
+
 }

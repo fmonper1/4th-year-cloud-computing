@@ -1,6 +1,9 @@
 <%@tag description="Overall Page template" pageEncoding="UTF-8"%>
 <%@attribute name="header" fragment="true" %>
 <%@attribute name="footer" fragment="true" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="req" value="${pageContext.request}" />
+<c:set var="baseURL" value="${req.scheme}://${req.serverName}:${req.serverPort}${req.contextPath}" />
 <!doctype html>
 <html lang="en">
 <head>
@@ -55,7 +58,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-8 col-md-7 py-4">
-                    <h4 class="text-white"><img id="peanut" src="img/peanut.svg"> Peanut Bank</h4>
+                    <h4 class="text-white"><img id="peanut" src="/img/peanut.svg"> Peanut Bank</h4>
                     <p class="text-muted">Peanuts are the equivalent of credit. You will need peanuts in order to use the services available in the platform.</p>
                     <p class="text-white">Peanuts in bank: 15<br>Peanuts used in the last 30 days: 3/30</p>
                 </div>

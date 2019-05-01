@@ -1,8 +1,11 @@
 package ac.uk.shef.cc19grp10.bookswap.models;
 
 import net.bytebuddy.implementation.bind.annotation.Default;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +17,7 @@ public class Listing {
     private Integer id;
 
     private String title;
-
+    @CreationTimestamp
 	private String description;
 
 	private Boolean closed;
@@ -27,6 +30,12 @@ public class Listing {
 	private User user;
 
 	private String moduleCode;
+
+
+	private LocalDateTime createDateTime;
+
+	@UpdateTimestamp
+	private LocalDateTime updateDateTime;
 
 	public Listing(){}
 
@@ -85,4 +94,20 @@ public class Listing {
     public void setClosed(Boolean closed) {
         this.closed = closed;
     }
+
+	public LocalDateTime getCreateDateTime() {
+		return createDateTime;
+	}
+
+	public void setCreateDateTime(LocalDateTime createDateTime) {
+		this.createDateTime = createDateTime;
+	}
+
+	public LocalDateTime getUpdateDateTime() {
+		return updateDateTime;
+	}
+
+	public void setUpdateDateTime(LocalDateTime updateDateTime) {
+		this.updateDateTime = updateDateTime;
+	}
 }
