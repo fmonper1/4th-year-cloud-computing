@@ -7,11 +7,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import javax.persistence.*;
 
 @Entity
-public class Bill {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Bill extends BaseEntity {
 
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @ManyToOne
@@ -22,10 +18,6 @@ public class Bill {
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @OneToOne
     private Transaction transaction;
-
-    public Long getId() {
-        return id;
-    }
 
     public Account getToAccount() {
         return toAccount;

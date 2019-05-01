@@ -49,7 +49,7 @@ public class BillController {
 	@PostMapping("/{billId}/pay")
 	public ModelAndView postPayBill(
 			@Valid BillForm billForm,
-			@SessionAttribute("user") User user,
+			@SessionAttribute User user,
 			@PathVariable long billId,
 			@RequestParam(value = "callbackUri") String callback
 	) throws URISyntaxException {
@@ -65,7 +65,8 @@ public class BillController {
 		model.put("bill", bill);
 
 		if (billForm.getAccept() != null && billForm.getAccept().equals("yes")) {
-			Account fromAccount = user.getAccount();
+			Account fromAccount = accountRepo.findAccountByOwner(user)
+					.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
 			try {
 				transactionManagement.createTransactionFromBill(bill, fromAccount);

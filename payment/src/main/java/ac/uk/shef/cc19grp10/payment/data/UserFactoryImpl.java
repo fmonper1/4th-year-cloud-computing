@@ -49,15 +49,13 @@ public class UserFactoryImpl implements UserFactory {
         }
     }
 
-    private User createNewUserAndAccount(long userId, String name, String accessToken) {
-        User newUser = new User(userId, name, accessToken);
+    private User createNewUserAndAccount(long authUserId, String name, String accessToken) {
+        User newUser = new User(authUserId, name, accessToken);
         userRepo.save(newUser);
 
         Account newAccount = Account.newUserAccount();
         newAccount.setOwner(newUser);
         accountRepo.save(newAccount);
-
-        newUser.setAccount(newAccount); // TODO check if there is a better way to do this
 
         return newUser;
     }

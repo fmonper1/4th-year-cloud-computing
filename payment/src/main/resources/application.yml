@@ -17,5 +17,7 @@ spring:
       suffix: .jsp
   profiles:
     active: dev
+  flyway:
+    enabled: true
 payment:
   platform_cut: 0.4

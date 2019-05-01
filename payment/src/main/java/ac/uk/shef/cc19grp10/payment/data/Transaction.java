@@ -4,13 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-public class Transaction {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Transaction extends BaseEntity {
 
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @ManyToOne
@@ -24,10 +23,6 @@ public class Transaction {
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "transaction", targetEntity = Bill.class)
     private Bill bill;
-
-    public Long getId() {
-        return id;
-    }
 
     public Account getFromAccount() {
         return fromAccount;

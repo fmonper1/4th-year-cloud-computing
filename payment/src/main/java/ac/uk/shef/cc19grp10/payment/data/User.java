@@ -7,10 +7,9 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import javax.persistence.*;
 
 @Entity
-public class User {
+public class User extends BaseEntity {
 
-    @Id
-    private Long id; // From auth microservice
+    private long authId; // From auth microservice
 
     private String name;
 
@@ -22,8 +21,8 @@ public class User {
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     private Account account;
 
-    public Long getId() {
-        return id;
+    public long getAuthId() {
+        return authId;
     }
 
     public String getName() {
@@ -42,20 +41,19 @@ public class User {
         this.accessToken = newAccessToken;
     }
 
-    public Account getAccount() {
-        return account;
+    public long getAccountId() {
+        return account.getId();
     }
 
     public void setAccount(Account account) {
         this.account = account;
     }
 
-    public User(long id, String name, String accessToken) {
-        this.id = id;
+    public User(long authId, String name, String accessToken) {
+        this.authId = authId;
         this.name = name;
         this.accessToken = accessToken;
     }
 
-    protected User() {
-    }
+    protected User() {}
 }

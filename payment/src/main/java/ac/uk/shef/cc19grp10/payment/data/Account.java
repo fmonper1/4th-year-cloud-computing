@@ -9,16 +9,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class Account {
+public class Account extends BaseEntity {
 
     @JsonIgnore
     private static final int INITIAL_USER_BALANCE = 1000;
     @JsonIgnore
     private static final int INITIAL_APP_BALANCE = 0;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     private int balance;
 
@@ -26,15 +22,11 @@ public class Account {
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     private User owner;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fromAccount", targetEntity = Transaction.class)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "fromAccount", targetEntity = Transaction.class)
     private Set<Transaction> outgoingTransactions;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "toAccount", targetEntity = Transaction.class)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "toAccount", targetEntity = Transaction.class)
     private Set<Transaction> incomingTransactions;
-
-    public Long getId() {
-        return id;
-    }
 
     public int getBalance() {
         return balance;

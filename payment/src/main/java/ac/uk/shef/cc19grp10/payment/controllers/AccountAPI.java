@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/api/v1/accounts")
 public class AccountAPI {
 
 	@Autowired
@@ -20,9 +20,10 @@ public class AccountAPI {
 	private Logger logger = LoggerFactory.getLogger(AccountAPI.class);
 
 	@GetMapping
-	public Account getAccountForCurrentUser(@SessionAttribute("user") User user)
+	public Account getAccountForCurrentUser(@SessionAttribute User user)
 	{
-		return user.getAccount();
+		return accountRepo.findAccountByOwner(user)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 	}
 
 	@GetMapping("/{accountId}")
