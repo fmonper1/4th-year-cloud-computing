@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
@@ -18,6 +19,7 @@ import java.net.URI;
 import java.net.URLEncoder;
 
 @Service
+@ConditionalOnProperty(prefix= "payment.", name="application_account_id")
 public class BillUtility {
 
     private Logger logger = LoggerFactory.getLogger(BillUtility.class);
