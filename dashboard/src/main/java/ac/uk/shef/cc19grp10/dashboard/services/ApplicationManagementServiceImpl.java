@@ -11,7 +11,6 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -23,23 +22,13 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import java.awt.*;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.SocketAddress;
 import java.net.URI;
 import java.nio.file.FileSystems;
 import java.nio.file.PathMatcher;
-import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Optional;
 
 /**
@@ -86,10 +75,10 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 
 	@Override
 	public DbApplication createDbApplication(String dbPassword, Application application){
-		String clientId = nameToClientId(application.getName());
+		String clientId = application.getClientId();
 		String dbUsername = clientId;
 		String applicationUrl = clientId;
-		String schemaName = nameToSchemaName(application.getName());
+		String schemaName = application.getSchemaName();
 
 		//TODO: scan for image path
 		String imagePath = null;
@@ -159,8 +148,8 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 
 	@Override
 	public Deployment createDeployment(MultipartFile warFile, Application application) throws ApiError {
-		String clientId = nameToClientId(application.getName());
-		String url = deployWarFile(warFile, clientId);
+		String clientId = application.getClientId();
+		String url = deployWarFile(warFile, application.getUrl());
 
 		String bestImagePath = findBestImagePath(clientId);
 
@@ -189,8 +178,7 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 		return bestImagePath;
 	}
 
-	private String deployWarFile(MultipartFile warFile, String clientId) throws ApiError {
-		String url = "/"+clientId;
+	private String deployWarFile(MultipartFile warFile, String url) throws ApiError {
 		MultiValueMap<String,Object> body = new LinkedMultiValueMap<>();
 		try {
 			body.add("file",new InputStreamResource(warFile.getInputStream()));
@@ -220,39 +208,7 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 		return url;
 	}
 
-	/**
-	 * Create a normalised, schema safe
-	 *
-	 * Replaces non-ascii characters with a close equivalent,
-	 * and removes non-alphanumeric characters
-	 */
-	private String nameToSchemaName(String applicationName) {
-		//unicode normalise
-		return "app_"+Normalizer.normalize(applicationName, Normalizer.Form.NFD)
-				//replace space with dash
-				.replaceAll("\\p{Space}","")
-				//remove non alphanumeric/dash characters
-				.replaceAll("[^\\p{Alnum}]", "")
-				//and lowercase it
-				.toLowerCase();
-	}
 
-	/**
-	 * Create a normalised, url-safe client id slug.
-	 *
-	 * Replaces non-ascii characters with a close equivalent,
-	 * and removes non-alphanumeric characters
-	 */
-	private String nameToClientId(String applicationName) {
-		//unicode normalise
-		return "app_"+Normalizer.normalize(applicationName, Normalizer.Form.NFD)
-				//replace space with dash
-				.replaceAll("\\p{Space}","_")
-				//remove non alphanumeric/dash characters
-				.replaceAll("[^\\p{Alnum}_]", "")
-				//and lowercase it
-				.toLowerCase();
-	}
 
 	private static class CreateAuthApplicationRequest {
 		@JsonProperty
