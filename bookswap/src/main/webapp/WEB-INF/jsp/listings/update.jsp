@@ -14,27 +14,25 @@
             <h3>Update a listing</h3>
             <form:form method="POST"
                        action="./update" modelAttribute="listing">
-                <table>
-                    <tr>
-                        <td><form:label path="id">id</form:label></td>
-                        <td><form:input path="id" readOnly="true"/></td>
-                    </tr>
-                    <tr>
-                        <td><form:label path="title">Title</form:label></td>
-                        <td><form:input path="title"/></td>
-                    </tr>
-                    <tr>
-                        <td><form:label path="description">Description</form:label></td>
-                        <td><form:input path="description"/></td>
-                    </tr>
-                    <tr>
-                        <td><form:label path="moduleCode">Module Code</form:label></td>
-                        <td><form:input path="moduleCode"/></td>
-                    </tr>
-                    <tr>
-                        <td><input type="submit" value="Submit"/></td>
-                    </tr>
-                </table>
+                <div class="form-group">
+
+                    <form:label path="id">id</form:label>
+                    <form:input path="id" class="form-control" readOnly="true"/>
+                </div>
+                <div class="form-group">
+                    <form:label path="title">Title</form:label>
+                    <form:input path="title" class="form-control" placeholder="Enter email"/>
+                </div>
+                <div class="form-group">
+                    <form:label path="description">Description</form:label>
+                    <form:input path="description" class="form-control" placeholder="Enter a descriptive message giving other users more details about the book you offer or possible trades"/>
+                </div>
+                <div class="form-group">
+                    <form:label path="moduleCode">Module Code</form:label>
+                    <form:input path="moduleCode" class="form-control" placeholder="Enter email"/>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+
             </form:form>
         </div>
     </jsp:body>
