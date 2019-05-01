@@ -50,8 +50,6 @@
                 <div class="col-sm-4 offset-md-1 py-4">
                     <h4 class="text-white">Navigation</h4>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-white">Profile</a></li>
-                        <li><a href="#" class="text-white">Signout</a></li>
                         <li><a href="<c:url value="/developer"/>" class="text-white">Developer</a></li>
                     </ul>
                 </div>
@@ -60,7 +58,7 @@
     </div>
     <div class="navbar navbar-dark bg-dark shadow-sm">
         <div class="container d-flex justify-content-between">
-            <a href="#" class="navbar-brand d-flex align-items-center">
+            <a href="<c:url value="/" />" class="navbar-brand d-flex align-items-center">
                 <img id="cloud" src="<c:url value="/resources/img/cloud.svg" />">
                 <strong> Cloud Student Suite</strong>
             </a>

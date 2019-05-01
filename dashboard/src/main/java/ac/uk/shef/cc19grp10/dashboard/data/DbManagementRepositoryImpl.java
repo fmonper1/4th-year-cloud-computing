@@ -45,7 +45,7 @@ public class DbManagementRepositoryImpl implements DbManagementRepository {
 	@Override
 	public void grantPrivileges(String schemaName, String userName) {
 		jdbcTemplate.update(conn -> {
-			PreparedStatement stmt = conn.prepareStatement("GRANT ALL PRIVILEGES ON "+schemaName+" TO ?");
+			PreparedStatement stmt = conn.prepareStatement("GRANT ALL PRIVILEGES ON "+schemaName+".* TO ?");
 			stmt.setString(1,userName);
 			return stmt;
 		});
