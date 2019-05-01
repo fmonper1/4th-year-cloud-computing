@@ -41,6 +41,11 @@ public class User extends BaseEntity {
         this.accessToken = newAccessToken;
     }
 
+    @Deprecated
+    public Account getAccount() {
+        return account;
+    }
+
     public long getAccountId() {
         return account.getId();
     }

@@ -3,6 +3,7 @@
 <%@ attribute name="title" required="true" type="java.lang.String" %>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <html lang="en">
     <head>
@@ -39,16 +40,16 @@
                     <div class="row">
                         <div class="col-sm-8 col-md-7 py-4">
                             <h4 class="text-white"><img id="peanut" src="<c:url value="/resources/img/peanut.svg" />"> Peanut Bank</h4>
-                            <p class="text-muted">Peanuts are the equivalent of credit. You will need peanuts in order to use the services available in the platform.</p>
-                            <p class="text-white">Peanuts in bank: -<br>Peanuts used in the last 30 days: -</p>
+                            <p class="text-light">Peanuts are the equivalent of credit. You will need peanuts in order to use the services available in the platform.</p>
+                            <p class="text-white">Peanuts in bank: ${currentUser.account.balance}</p>
                         </div>
-                        <%--                <div class="col-sm-4 offset-md-1 py-4">--%>
-                        <%--                    <h4 class="text-white">Navigation</h4>--%>
-                        <%--                    <ul class="list-unstyled">--%>
-                        <%--                        <li><a href="#" class="text-white">Profile</a></li>--%>
-                        <%--                        <li><a href="#" class="text-white">Signout</a></li>--%>
-                        <%--                    </ul>--%>
-                        <%--                </div>--%>
+                        <div class="col-sm-4 offset-md-1 py-4">
+                            <h4 class="text-white">Navigation</h4>
+                            <ul class="list-unstyled">
+                                <li><a href="<c:url value="/account" />" class="text-white">${currentUser.name}'s Account</a></li>
+<%--                                <li><a href="#" class="text-white">Signout</a></li>--%>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -56,7 +57,7 @@
                 <div class="container d-flex justify-content-between">
                     <a href="#" class="navbar-brand d-flex align-items-center">
                         <img id="cloud" src="<c:url value="/resources/img/cloud.svg" />">
-                        <strong> Cloud Student Suite</strong>
+                        <strong>Cloud Student Suite</strong>
                     </a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
@@ -73,6 +74,7 @@
         <footer class="footer mt-auto py-3 bg-light">
             <div class="container">
                 <span class="text-muted">University Of Sheffield <%= Calendar.getInstance().get(Calendar.YEAR) %> - Cloud Computing Group 1</span>
+                <span class="text-muted float-right">Peanut Bank</span>
             </div>
         </footer>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
