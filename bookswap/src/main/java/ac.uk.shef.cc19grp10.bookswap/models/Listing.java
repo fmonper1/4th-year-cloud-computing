@@ -17,13 +17,10 @@ public class Listing {
     private Integer id;
 
     private String title;
-    @CreationTimestamp
 	private String description;
 
 	private Boolean closed;
 
-	@OneToMany(mappedBy = "listing", cascade = CascadeType.ALL)
-	private List<Comment> comments = new ArrayList<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="user_id", updatable = false, insertable = false, nullable=false)
@@ -31,7 +28,7 @@ public class Listing {
 
 	private String moduleCode;
 
-
+	@CreationTimestamp
 	private LocalDateTime createDateTime;
 
 	@UpdateTimestamp
@@ -99,15 +96,8 @@ public class Listing {
 		return createDateTime;
 	}
 
-	public void setCreateDateTime(LocalDateTime createDateTime) {
-		this.createDateTime = createDateTime;
-	}
-
 	public LocalDateTime getUpdateDateTime() {
 		return updateDateTime;
 	}
 
-	public void setUpdateDateTime(LocalDateTime updateDateTime) {
-		this.updateDateTime = updateDateTime;
-	}
 }

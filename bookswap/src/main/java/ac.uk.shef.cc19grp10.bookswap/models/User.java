@@ -14,16 +14,23 @@ public class User {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 
-    private String name;
+	@Column(nullable = false, unique = true)
+	private long authId;
+	@Column(nullable = false)
+	private String name;
+	@Column(nullable = false)
+	private String accessToken;
 
 	private String email;
 	private String phoneNumber;
 
     public User() {};
 
-	public User(String name, String email) {
+	public User(long authId, String name, String accessToken){
+		this.authId = authId;
 		this.name = name;
-		this.email = email;
+		this.accessToken = accessToken;
+		this.email = name+"@sheffield.ac.uk";
 	}
 
 	public Integer getId() {
@@ -61,5 +68,29 @@ public class User {
 
 	public void setListings(List<Listing> listings) {
 		this.listings = listings;
+	}
+
+	public long getAuthId() {
+		return authId;
+	}
+
+	public void setAuthId(long authId) {
+		this.authId = authId;
+	}
+
+	public String getAccessToken() {
+		return accessToken;
+	}
+
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 }
