@@ -43,7 +43,7 @@ public class BillController {
 			return completePaymentSuccess(callback);
 		}
 
-		return new ModelAndView("payBill", "bill", bill);
+		return new ModelAndView("bill/pay", "bill", bill);
 	}
 
 	@PostMapping("/{billId}/pay")
@@ -71,7 +71,7 @@ public class BillController {
 				transactionManagement.createTransactionFromBill(bill, fromAccount);
 			} catch (TransactionManagement.InsufficientFundsError e) {
 				model.put("error", "Your balance is insufficient");
-				return new ModelAndView("payBill", model);
+				return new ModelAndView("bill/pay", model);
 			}
 
 			return completePaymentSuccess(callback);
