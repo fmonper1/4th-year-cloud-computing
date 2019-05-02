@@ -58,14 +58,14 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-8 col-md-7 py-4">
-                    <h4 class="text-white"><img id="peanut" src="/img/peanut.svg"> Peanut Bank</h4>
+                    <h4 class="text-white"><img id="peanut" src="<c:url value="/img/peanut.svg"/>"> Peanut Bank</h4>
                     <p class="text-muted">Peanuts are the equivalent of credit. You will need peanuts in order to use the services available in the platform.</p>
                     <p class="text-white">Peanuts in bank: 15<br>Peanuts used in the last 30 days: 3/30</p>
                 </div>
                 <div class="col-sm-4 offset-md-1 py-4">
                     <h4 class="text-white">Navigation</h4>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-white">Profile</a></li>
+                        <li><a href="<c:url value="/profile"/>" class="text-white">Profile</a></li>
                         <li><a href="#" class="text-white">Signout</a></li>
                     </ul>
                 </div>
@@ -74,8 +74,8 @@
     </div>
     <div class="navbar navbar-dark bg-dark shadow-sm">
         <div class="container d-flex justify-content-between">
-            <a href="#" class="navbar-brand d-flex align-items-center">
-                <img id="cloud" src="img/open-book.svg">
+            <a href="<c:url value="/"/>" class="navbar-brand d-flex align-items-center">
+                <img id="cloud" src="<c:url value="/img/open-book.svg"/>">
                 <strong> Cloud Book Swap</strong>
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,42 +84,25 @@
         </div>
     </div>
 </header>
-
-<main role="main" class="container">
-    <br>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="/">Navbar</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <ul class="navbar-nav">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/listing/add">Create Listing</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/user/listings">My Listings</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Dropdown link
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-<div id="body">
-    <jsp:doBody/>
+<div class="nav-scroller bg-white shadow-sm">
+    <div class="container">
+        <nav class="nav nav-underline">
+            <a class="nav-link" href="<c:url value="/"/>">Home</a>
+<%--            <a class="nav-link" href="#">--%>
+<%--                Friends--%>
+<%--                <span class="badge badge-pill bg-light align-text-bottom">27</span>--%>
+<%--            </a>--%>
+            <a class="nav-link" href="/search">Search</a>
+            <a class="nav-link" href="/user/listings">My Listings</a>
+            <a class="nav-link" href="<c:url value="/listing/add"/>">Create Listing</a>
+            <a class="nav-link" href="/user/profile">Profile</a>
+        </nav>
+    </div>
 </div>
+<main role="main" class="container" role="main">
+    <div id="body">
+        <jsp:doBody/>
+    </div>
 </main>
 
 

@@ -15,3 +15,4 @@ include 'payment'
 include 'demo'
 
 include 'utils'
+include 'bookswap'

@@ -22,6 +22,7 @@ public class User {
 	private String accessToken;
 
 	private String email;
+	private String altEmail;
 	private String phoneNumber;
 
     public User() {};
@@ -58,8 +59,7 @@ public class User {
 	}
 
 	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
 	private List<Listing> listings;
 
 	public List<Listing> getListings() {
@@ -92,5 +92,13 @@ public class User {
 
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
+	}
+
+	public String getAltEmail() {
+		return altEmail;
+	}
+
+	public void setAltEmail(String altEmail) {
+		this.altEmail = altEmail;
 	}
 }

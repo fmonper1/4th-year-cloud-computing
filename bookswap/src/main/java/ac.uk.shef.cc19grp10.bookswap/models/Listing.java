@@ -7,6 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity(name = "Listing") // This tells Hibernate to make a table out of this class
@@ -23,23 +24,23 @@ public class Listing {
 
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="user_id", updatable = false, insertable = false, nullable=false)
 	private User user;
 
 	private String moduleCode;
 
 	@CreationTimestamp
-	private LocalDateTime createDateTime;
+	private Date createDateTime;
 
 	@UpdateTimestamp
-	private LocalDateTime updateDateTime;
+	private Date updateDateTime;
 
 	public Listing(){}
 
-	public Listing(String title, String description, String moduleCode){
+	public Listing(String title, String description, String moduleCode, User user){
 		this.title = title;
 		this.description = description;
 		this.moduleCode = moduleCode;
+		this.user = user;
 		this.closed = Boolean.FALSE;
 	}
 
@@ -92,11 +93,11 @@ public class Listing {
         this.closed = closed;
     }
 
-	public LocalDateTime getCreateDateTime() {
+	public Date getCreateDateTime() {
 		return createDateTime;
 	}
 
-	public LocalDateTime getUpdateDateTime() {
+	public Date getUpdateDateTime() {
 		return updateDateTime;
 	}
 

@@ -4,15 +4,17 @@ import ac.uk.shef.cc19grp10.bookswap.models.Listing;
 import ac.uk.shef.cc19grp10.bookswap.repositories.ListingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import ac.uk.shef.cc19grp10.bookswap.models.User;
 import ac.uk.shef.cc19grp10.bookswap.repositories.UserRepository;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,12 +50,80 @@ public class UserController	 {
 	private static List<Listing> listings = new ArrayList<Listing>();
 
 	@GetMapping(path="/listings")
-	public ModelAndView showListings() {
+	public ModelAndView showListings(@SessionAttribute("user") User user) {
 		listings.clear();
 
 //		listingRepository.findAll().forEach(listings::add);
-		listingRepository.findByUserId(1).forEach(listings::add);
+		listingRepository.findByUserId(user.getId()).forEach(listings::add);
 		return new ModelAndView("users/listings", "listings", listings);
+	}
+
+	@GetMapping(path="/profile")
+	public ModelAndView showUserProfile(
+			@ModelAttribute EditProfileForm editProfileForm,
+			@SessionAttribute("user") User user,
+			ModelMap model
+	) {
+		model.addAttribute("user", user);
+		model.addAttribute("form", editProfileForm);
+		return new ModelAndView("users/profile", model);
+	}
+
+	@PostMapping(path="/update")
+	public ModelAndView updateUserProfile(
+			@ModelAttribute @Valid EditProfileForm editProfileForm,
+			BindingResult result,
+			@SessionAttribute("user") User user,
+			ModelMap model
+	) {
+		if (result.hasErrors()) {
+//			editProfileForm.setError("Some error");
+			return new ModelAndView("listings/add");
+		}
+
+		if (editProfileForm.name.length() > 1) {
+			user.setName(editProfileForm.name);
+		}
+		if (editProfileForm.altEmail.length() > 1) {
+			user.setAltEmail(editProfileForm.altEmail);
+		}
+		if (editProfileForm.phoneNumber.length() > 1) {
+			user.setPhoneNumber(editProfileForm.phoneNumber);
+		}
+		userRepository.save(user);
+		return new ModelAndView("redirect:/user/profile");
+	}
+
+
+	public class EditProfileForm {
+		private String altEmail;
+		private String phoneNumber;
+		private String name;
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getPhoneNumber() {
+			return phoneNumber;
+		}
+
+		public void setPhoneNumber(String phoneNumber) {
+			this.phoneNumber = phoneNumber;
+		}
+
+		public String getAltEmail() {
+			return altEmail;
+		}
+
+		public void setAltEmail(String altEmail) {
+			this.altEmail = altEmail;
+		}
+
 	}
 
 }
