@@ -56,7 +56,7 @@
             </div>
             <div class="navbar navbar-dark bg-dark shadow-sm">
                 <div class="container d-flex justify-content-between">
-                    <a href="#" class="navbar-brand d-flex align-items-center">
+                    <a href="<c:url value="/" />" class="navbar-brand d-flex align-items-center">
                         <img id="cloud" src="<c:url value="/resources/img/cloud.svg" />">
                         <strong>Cloud Student Suite</strong>
                     </a>
@@ -74,7 +74,9 @@
 
         <footer class="footer mt-auto py-3 bg-light">
             <div class="container">
-                <span class="text-muted">University Of Sheffield <%= Calendar.getInstance().get(Calendar.YEAR) %> - Cloud Computing Group 1</span>
+                <span class="text-muted">
+                    <span class="d-none d-md-inline">University Of Sheffield</span><span class="d-md-none d-inline">UoS</span> - COM4519 Group 1 <%= Calendar.getInstance().get(Calendar.YEAR) %>
+                </span>
                 <span class="text-muted float-right">Peanut Bank</span>
             </div>
         </footer>
