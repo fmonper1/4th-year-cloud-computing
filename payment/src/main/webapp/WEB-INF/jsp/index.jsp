@@ -9,4 +9,7 @@
             <p class="lead">The Peanut Bank will have its due, they say.</p>
         </div>
     </section>
+    <section class="text-center">
+        <a class="btn btn-outline-primary btn-lg" href="<c:url value="/account" />" role="button">View Your Account</a>
+    </section>
 </t:default-template>

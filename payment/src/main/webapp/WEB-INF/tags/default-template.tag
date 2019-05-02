@@ -42,12 +42,20 @@
                         <div class="col-sm-8 col-md-7 py-4">
                             <h4 class="text-white"><img id="peanut" src="<c:url value="/resources/img/peanut.svg" />"> Peanut Bank</h4>
                             <p class="text-light">Peanuts are the equivalent of credit. You will need peanuts in order to use the services available in the platform.</p>
-                            <p class="text-white">Peanuts in bank: ${currentUser.account.balance}</p>
+
+                            <c:if test="${currentUser != null && currentUser.account != null}">
+                                <p class="text-white">Peanuts in bank: ${currentUser.account.balance}</p>
+                            </c:if>
                         </div>
                         <div class="col-sm-4 offset-md-1 py-4">
                             <h4 class="text-white">Navigation</h4>
                             <ul class="list-unstyled">
-                                <li><a href="<c:url value="/account" />" class="text-white">${currentUser.name}'s Account</a></li>
+                                <c:if test="${currentUser == null}">
+                                    <li><a href="<c:url value="/account" />" class="text-white">View Your Account</a></li>
+                                </c:if>
+                                <c:if test="${currentUser != null}">
+                                    <li><a href="<c:url value="/account" />" class="text-white">${currentUser.name}'s Account</a></li>
+                                </c:if>
 <%--                                <li><a href="#" class="text-white">Signout</a></li>--%>
                             </ul>
                         </div>
