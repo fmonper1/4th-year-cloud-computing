@@ -84,13 +84,13 @@ public class BillController {
 	}
 
 	private ModelAndView completePaymentFailed(String redirect) throws URISyntaxException {
-		String authParams = "success=0";
-		return completeAuthorisation(redirect, authParams);
+		String params = "success=0";
+		return completeAuthorisation(redirect, params);
 	}
 
 	private ModelAndView completePaymentSuccess(String redirect) throws URISyntaxException {
-		String authParams = "success=1";
-		return completeAuthorisation(redirect, authParams);
+		String params = "success=1";
+		return completeAuthorisation(redirect, params);
 	}
 
 	private ModelAndView completeAuthorisation(String redirect, String authParams) throws URISyntaxException {

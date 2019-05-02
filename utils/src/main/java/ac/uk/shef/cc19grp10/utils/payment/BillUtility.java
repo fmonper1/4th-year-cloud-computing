@@ -14,6 +14,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -99,10 +101,16 @@ public class BillUtility {
         return responseBody.paid;
     }
 
-    public ModelAndView redirectUserToBillPayment(long billId, String callbackUri) throws UnsupportedEncodingException {
+    public void redirectUserToBillPayment(HttpServletResponse response, long billId, String callbackUri) throws IOException {
+        String redirectUri = getBillPaymentUri(billId, callbackUri);
+        response.sendRedirect(redirectUri);
+    }
+
+    public String getBillPaymentUri(long billId, String callbackUri) throws  UnsupportedEncodingException {
         String redirectUri = paymentServletBase + "/bill/" + billId + "/pay";
         redirectUri += "?callbackUri=" + URLEncoder.encode(callbackUri,"UTF-8");
-        return new ModelAndView("redirect:" + redirectUri);
+
+        return redirectUri;
     }
 
     private static class BillResponse {
