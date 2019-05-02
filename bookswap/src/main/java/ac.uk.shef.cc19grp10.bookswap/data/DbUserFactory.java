@@ -2,6 +2,7 @@ package ac.uk.shef.cc19grp10.bookswap.data;
 
 import ac.uk.shef.cc19grp10.bookswap.models.User;
 import ac.uk.shef.cc19grp10.bookswap.repositories.UserRepository;
+import ac.uk.shef.cc19grp10.utils.login.UserFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityExistsException;

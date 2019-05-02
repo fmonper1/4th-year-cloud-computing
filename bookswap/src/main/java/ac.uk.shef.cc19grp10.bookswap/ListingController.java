@@ -3,6 +3,7 @@ package ac.uk.shef.cc19grp10.bookswap;
 
 import ac.uk.shef.cc19grp10.bookswap.models.User;
 import ac.uk.shef.cc19grp10.bookswap.repositories.UserRepository;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import ac.uk.shef.cc19grp10.bookswap.repositories.ListingRepository;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,11 +36,18 @@ public class ListingController	 {
 
 	private final Logger logger = LoggerFactory.getLogger(ListingController.class);
 
+	private boolean isOwner;
+
 	/**
 	This route is used to view the details for a listing
 	 */
 	@RequestMapping(path = "/{id}/view", method = RequestMethod.GET)
-	public ModelAndView displayListing(@PathVariable(value="id")Integer id, ModelMap model) {
+	public ModelAndView displayListing(
+		@PathVariable(value="id")Integer id,
+	 	ModelMap model,
+		@SessionAttribute("user") User user
+
+	) {
 		searchResults.clear();
 		searchResults2.clear();
 
@@ -46,21 +56,30 @@ public class ListingController	 {
 		listingRepository.findByModule(listing.getModuleCode()).forEach(searchResults::add);
 		listingRepository.findByModule(listing.getModuleCode().replaceAll("\\d","")).forEach(searchResults2::add);
 
+		isOwner = user.getId() == listing.getUser().getId();
+
 		model.addAttribute("listing", listing);
 		model.addAttribute("searchResults", searchResults);
 		model.addAttribute("searchResults2", searchResults2);
+		model.addAttribute("isOwner", isOwner);
+
 		return new ModelAndView("listings/view", model);
 	}
 
     /**
      GET - This route is used to view the form to update a listing
      */
+
 	@RequestMapping(path = "/{id}/update", method = RequestMethod.GET)
-	public ModelAndView updateListing(@PathVariable(value="id")Integer id, ModelMap model) {
+	public ModelAndView updateListing(
+		@PathVariable(value="id")Integer id,
+		@SessionAttribute("user") User user,
+		ModelMap model
+	) {
 		Listing listing = listingRepository.findById(id).orElse(null);
 
 		model.addAttribute("listing", listing);
-		return new ModelAndView("listings/update","listing", listing);
+		return new ModelAndView("listings/update");
 	}
 
 
@@ -89,25 +108,29 @@ public class ListingController	 {
 	}
 
 	@RequestMapping(path="/add", method = RequestMethod.GET) // Map ONLY GET Requests
-    public ModelAndView showForm() {
-        return new ModelAndView("listings/add", "listing", new Listing()); }
+    public ModelAndView showForm(@ModelAttribute CreateListingForm createListingForm) {
+        return new ModelAndView("listings/add");
+    }
 
 	@RequestMapping(path="/add", method = RequestMethod.POST) // Map ONLY GET Requests
-	public String submit(@Valid @ModelAttribute("listing")Listing listing,
-						 BindingResult result, ModelMap model) {
+	public ModelAndView submit(
+			@ModelAttribute @Valid CreateListingForm createListingForm,
+			BindingResult result,
+		 	@SessionAttribute("user") User user
+	) {
 		if (result.hasErrors()) {
-			return "error";
+			logger.debug(result.toString());
+			createListingForm.setError("Some error");
+			return new ModelAndView("listings/add");
 		}
-		// @ResponseBody means the returned String is the response, not a view name
-		// @RequestParam means it is a parameter from the GET or POST request
-		// TODO: REMOVE THIS
-		User u = userRepository.findById(1).orElse(null);
-		listing.setUser(u);
-		listingRepository.save(listing);
-		model.addAttribute("title", listing.getTitle());
-		model.addAttribute("description", listing.getDescription());
-		model.addAttribute("id", listing.getId());
-		return "listings/view";
+		Listing l = new Listing(
+				createListingForm.title,
+				createListingForm.description,
+				createListingForm.moduleCode,
+				user
+		);
+		listingRepository.save(l);
+		return new ModelAndView("redirect:/listing/"+l.getId()+"/view");
 	}
 
     @GetMapping("/{id}/delete")
@@ -121,4 +144,47 @@ public class ListingController	 {
 		// This returns a JSON or XML with the users
 		return listingRepository.findAll();
 	}
+
+	public class CreateListingForm {
+		@Size(min=5,max=28)
+		String title;
+
+		@NotBlank
+		String description;
+
+		@NotBlank
+		String moduleCode;
+
+		String error;
+
+		public String getTitle() {
+			return title;
+		}
+
+		public void setTitle(String title) {
+			this.title = title;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		public String getModuleCode() {
+			return moduleCode;
+		}
+
+		public void setModuleCode(String moduleCode) {
+			this.moduleCode = moduleCode;
+		}
+
+		public String getError() {return error;}
+
+		public void setError(String error) {this.error = error;}
+
+	}
+
 }

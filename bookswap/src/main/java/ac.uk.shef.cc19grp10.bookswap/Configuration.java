@@ -29,7 +29,8 @@ public class Configuration implements WebMvcConfigurer {
 		//setup login interceptor from utils
 		//(note that /auth/callback and /auth are the minimum ignored paths for login to work correctly)
 		registry.addInterceptor(loginInterceptorBean())
-				.excludePathPatterns("/","/auth/callback","/error"/* add any other urls that need to be accessible withouh loggin in here*/);
+				.excludePathPatterns("/auth/callback","/error","/img"/* add any other urls that need to be accessible withouh loggin in here*/);
+//				.excludePathPatterns("/","/auth/callback","/error","/img"/* add any other urls that need to be accessible withouh loggin in here*/);
 	}
 
 
@@ -42,7 +43,7 @@ public class Configuration implements WebMvcConfigurer {
 	//required for login system from utils
 	@Bean
 	UserFactory userFactory(){
-		return new DbUserFactory(); /*Rutrn and instance of UserFactory here*/
+		return new DbUserFactory(); /*Return and instance of UserFactory here*/
 	}
 
 }
