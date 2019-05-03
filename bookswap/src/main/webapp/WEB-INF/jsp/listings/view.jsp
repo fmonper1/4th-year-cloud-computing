@@ -23,40 +23,18 @@
 
         <div class="my-3 p-3 bg-white rounded shadow-sm">
             <!-- <h6 class="border-bottom border-gray pb-2 mb-0">Recent updates</h6> -->
+            <h4 class="border-bottom border-gray pb-2">Listing Details</h4>
 
-            <table>
-                <tr>
-                    <td>Title :</td>
-                    <td><c:if test="${listing.closed}">[CLOSED]</c:if>${listing.title}</td>
-                    <td>${listing.closed}</td>
+            <p>${listing.description}</p>
+            <p>created by: ${listing.user.name}</p>
 
-                </tr>
-                <tr>
-                    <td>Description :</td>
-                    <td>${listing.description}</td>
-                </tr>
-                <tr>
-                    <td>id :</td>
-                    <td>${listing.id}</td>
-                </tr>
-                <tr>
-                    <td>module code :</td>
-                    <td>${listing.moduleCode}</td>
-                </tr>
-                <tr>
-                    <td>created by :</td>
-                    <td>${listing.user.name}</td>
-                </tr>
-                <tr>
+            <c:if test="${isOwner}">
+                <a class="btn btn-primary" href="<c:url value="update"/>">Edit</a>
+                <a class="btn btn-primary" href="<c:url value="close"/>">Close</a>
+                <a class="btn btn-primary" href="<c:url value="delete"/>">Delete</a>
+            </c:if>
 
-                    <c:if test="${isOwner}">
-                        <td><a href="<c:url value="update"/>">Edit</a> </td>
-                        <td><a href="<c:url value="close"/>">Close</a> </td>
-                        <td><a href="<c:url value="delete"/>">Delete</a> </td>
-                    </c:if>
 
-                </tr>
-            </table>
 
             <hr/>
             <div class="row">

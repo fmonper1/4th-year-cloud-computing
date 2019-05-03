@@ -1,6 +1,7 @@
 package ac.uk.shef.cc19grp10.bookswap;
 
 import ac.uk.shef.cc19grp10.bookswap.data.DbUserFactory;
+import ac.uk.shef.cc19grp10.utils.payment.PaywallInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -31,6 +32,9 @@ public class Configuration implements WebMvcConfigurer {
 		registry.addInterceptor(loginInterceptorBean())
 				.excludePathPatterns("/auth/callback","/error","/img"/* add any other urls that need to be accessible withouh loggin in here*/);
 //				.excludePathPatterns("/","/auth/callback","/error","/img"/* add any other urls that need to be accessible withouh loggin in here*/);
+		registry.addInterceptor(paywallInterceptorBean())
+				.excludePathPatterns("/auth/callback", "/error", "/resources/**", "/api/**", "/payment/callback");
+
 	}
 
 
@@ -38,6 +42,12 @@ public class Configuration implements WebMvcConfigurer {
 	@Bean
 	LoginInterceptor loginInterceptorBean(){
 		return new LoginInterceptor();
+	}
+
+	//required for login system from utils
+	@Bean
+	PaywallInterceptor paywallInterceptorBean(){
+		return new PaywallInterceptor();
 	}
 
 	//required for login system from utils

@@ -11,7 +11,7 @@
     </jsp:attribute>
     <jsp:body>
         <div class="my-3 p-3 bg-white rounded shadow-sm">
-            <h3>Update a listing</h3>
+            <h4 class="border-bottom border-gray pb-2">Update A Listing</h4>
             <c:url var="search_url" value="update"/>
             <form:form method="POST"
                        action="${search_url}" modelAttribute="listing">
