@@ -12,8 +12,8 @@ include 'dashboard'
 
 include 'tutorFinder'
 include 'payment'
+include 'bookswap'
 
 include 'demo'
 
 include 'utils'
-include 'bookswap'
