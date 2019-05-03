@@ -9,6 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Rest API Controller for Bill entity
+ */
+
 @RestController
 @RequestMapping("/api/v1/bills")
 public class BillAPI {

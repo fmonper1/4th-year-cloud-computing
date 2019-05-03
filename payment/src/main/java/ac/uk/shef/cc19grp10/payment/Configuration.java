@@ -8,11 +8,16 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Configuration class for the Spring application.
+ */
 @org.springframework.context.annotation.Configuration
 public class Configuration implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
+
+		// Require login except for some endpoints required for resources, authorization, errors, etc..
 		registry.addInterceptor(loginInterceptorBean())
 				.excludePathPatterns("/resources/**", "/auth/callback", "/error", "/api/**");
 	}

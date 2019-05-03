@@ -8,8 +8,14 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Represents a transaction between two accounts in the database.
+ */
+
 @Entity
 public class Transaction extends BaseEntity {
+
+    /* Entity attributes */
 
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @ManyToOne
@@ -24,6 +30,8 @@ public class Transaction extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "transaction", targetEntity = Bill.class)
     private Bill bill;
 
+    /* Getters */
+
     public Account getFromAccount() {
         return fromAccount;
     }
@@ -36,11 +44,22 @@ public class Transaction extends BaseEntity {
         return amount;
     }
 
+    /* Constructors */
+
+    /**
+     * Initializes a transaction entity with a debit account, credit account, and amount.
+     * @param from Account amount is withdrawn from.
+     * @param to Account amount is deposited into.
+     * @param amount Amount transferred.
+     */
     public Transaction(Account from, Account to, int amount) {
         this.fromAccount = from;
         this.toAccount = to;
         this.amount = amount;
     }
 
+    /**
+     * Blank constructor for JPA.
+     */
     protected Transaction() {}
 }

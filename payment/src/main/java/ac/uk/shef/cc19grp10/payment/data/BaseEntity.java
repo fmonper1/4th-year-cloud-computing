@@ -6,6 +6,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Represents an abstract entity providing functionality shared among all entities in this application.
+ */
 @MappedSuperclass
 public abstract class BaseEntity {
 
@@ -21,7 +24,7 @@ public abstract class BaseEntity {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    /* Methods */
+    /* Getters */
 
     public long getId() {
         return id;

@@ -6,20 +6,28 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 
+/**
+ * Represents an auth user in the database. Generally used to identify the current user browsing and interact with auth.
+ */
+
 @Entity
 public class User extends BaseEntity {
 
+    /* Entity attributes */
+
     private long authId; // From auth microservice
 
-    private String name;
+    private String name; // From auth microservice
 
     @JsonIgnore
     @Column(nullable = false)
-    private String accessToken;
+    private String accessToken; // From auth microservice
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "owner", targetEntity = Account.class)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     private Account account;
+
+    /* Getters and Setters */
 
     public long getAuthId() {
         return authId;
@@ -41,7 +49,7 @@ public class User extends BaseEntity {
         this.accessToken = newAccessToken;
     }
 
-    @Deprecated
+    @Deprecated // Currently returns a stale account, due to the way the user is stored in the session. Needs refactor.
     public Account getAccount() {
         return account;
     }
@@ -54,11 +62,22 @@ public class User extends BaseEntity {
         this.account = account;
     }
 
+    /* Constructors */
+
+    /**
+     * Initializes a user entity with attributes from the authorization microservice. Often used with the UserFactory.
+     * @param authId Authorization ID from the auth microservice.
+     * @param name Name from the authorization microservice.
+     * @param accessToken Access token from the authorization microservice.
+     */
     public User(long authId, String name, String accessToken) {
         this.authId = authId;
         this.name = name;
         this.accessToken = accessToken;
     }
 
+    /**
+     * Blank constructor for JPA.
+     */
     protected User() {}
 }

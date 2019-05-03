@@ -10,6 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Rest API Controller for Account entity
+ */
+
 @RestController
 @RequestMapping("/api/v1/accounts")
 public class AccountAPI {
@@ -23,13 +27,6 @@ public class AccountAPI {
 	public Account getAccountForCurrentUser(@SessionAttribute User user)
 	{
 		return accountRepo.findAccountByOwner(user)
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-	}
-
-	@GetMapping("/{accountId}")
-	public Account getAccountForCurrentUser(@PathVariable long accountId)
-	{
-		return accountRepo.findById(accountId)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 	}
 
