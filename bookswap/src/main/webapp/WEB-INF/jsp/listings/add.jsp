@@ -12,8 +12,9 @@
     <jsp:body>
         <div class="my-3 p-3 bg-white rounded shadow-sm">
             <h4 class="border-bottom border-gray pb-2">Add A Listing</h4>
+            <c:url var="search_url" value="listing/add"/>
             <form:form method="POST"
-                       action="/listing/add" modelAttribute="createListingForm">
+                       action="${search_url}" modelAttribute="createListingForm">
                 ${createListingForm.error}
                 ${error}
                 <div class="form-group">

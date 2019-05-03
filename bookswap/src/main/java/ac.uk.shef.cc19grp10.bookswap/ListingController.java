@@ -21,6 +21,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller    // This means that this class is a Controller
 @RequestMapping(path="/listing") // This means URL's start with /demo (after Application path)
@@ -84,13 +85,24 @@ public class ListingController	 {
 
 
 	@RequestMapping(path = "/{id}/update", method = RequestMethod.POST)
-	public ModelAndView submitUpdateListing(@PathVariable(value="id")Integer id, @Valid @ModelAttribute("listing")Listing listing, BindingResult result, ModelMap model) {
+	public ModelAndView submitUpdateListing(
+			@PathVariable(value="id")Integer id,
+			@ModelAttribute @Valid CreateListingForm createListingForm,
+			BindingResult result,
+			ModelMap model
+	) {
 		if (result.hasErrors()) {
 			return new ModelAndView("redirect:/listing/"+id+"/view", model);
 		}
-		Listing l = listingRepository.save(listing);
-
-		model.addAttribute("listing", listing);
+		Optional<Listing> l = listingRepository.findById(id);
+		if(l.isPresent()) {
+			Listing listing = l.get();
+			listing.setTitle(createListingForm.getTitle());
+			listing.setDescription(createListingForm.getDescription());
+			listing.setModuleCode(createListingForm.getModuleCode());
+			listingRepository.save(listing);
+		}
+		model.addAttribute("listing", l.get());
 		return new ModelAndView("redirect:/listing/"+id+"/view", model);
 	}
 
@@ -108,7 +120,9 @@ public class ListingController	 {
 	}
 
 	@RequestMapping(path="/add", method = RequestMethod.GET) // Map ONLY GET Requests
-    public ModelAndView showForm(@ModelAttribute CreateListingForm createListingForm) {
+    public ModelAndView showForm(
+    		@ModelAttribute CreateListingForm createListingForm
+	) {
         return new ModelAndView("listings/add");
     }
 

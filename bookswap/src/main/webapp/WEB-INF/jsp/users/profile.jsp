@@ -30,9 +30,9 @@
 
             <h4 class="border-bottom border-gray pb-2">Update Details</h4>
 
-
+            <c:url var="search_url" value="/user/update"/>
             <form:form method="POST"
-                       action="/user/update" modelAttribute="form">
+                       action="${search_url}" modelAttribute="form">
                 ${createListingForm.error}
                 ${error}
                 <div class="form-group">

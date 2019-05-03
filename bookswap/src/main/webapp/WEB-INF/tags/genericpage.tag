@@ -12,13 +12,11 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Jekyll v3.8.5">
-    <title>Album example · Bootstrap</title>
+    <title>Book Swap</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/4.3/examples/album/">
 
-    <!-- Bootstrap core CSS -->
     <link href="https://getbootstrap.com/docs/4.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
 
     <style>
         .bd-placeholder-img {
@@ -49,7 +47,6 @@
             background: #007bff
         }
     </style>
-    <!-- Custom styles for this template -->
     <link href="album.css" rel="stylesheet">
 </head>
 <body>
@@ -58,15 +55,13 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-8 col-md-7 py-4">
-                    <h4 class="text-white"><img id="peanut" src="<c:url value="/img/peanut.svg"/>"> Peanut Bank</h4>
-                    <p class="text-muted">Peanuts are the equivalent of credit. You will need peanuts in order to use the services available in the platform.</p>
-                    <p class="text-white">Peanuts in bank: 15<br>Peanuts used in the last 30 days: 3/30</p>
                 </div>
                 <div class="col-sm-4 offset-md-1 py-4">
                     <h4 class="text-white">Navigation</h4>
                     <ul class="list-unstyled">
-                        <li><a href="<c:url value="/profile"/>" class="text-white">Profile</a></li>
-                        <li><a href="#" class="text-white">Signout</a></li>
+                        <li><a href="<c:url value="./"/>" class="text-white">Back to Dashboard</a></li>
+                        <li><a href="#" class="text-white">Peanut Bank</a></li>
+                        <li><a href="#" class="text-white">Tutor Finder</a></li>
                     </ul>
                 </div>
             </div>
@@ -88,14 +83,10 @@
     <div class="container">
         <nav class="nav nav-underline">
             <a class="nav-link" href="<c:url value="/"/>">Home</a>
-<%--            <a class="nav-link" href="#">--%>
-<%--                Friends--%>
-<%--                <span class="badge badge-pill bg-light align-text-bottom">27</span>--%>
-<%--            </a>--%>
-            <a class="nav-link" href="/search">Search</a>
-            <a class="nav-link" href="/user/listings">My Listings</a>
+            <a class="nav-link" href="<c:url value="/search"/>">Search</a>
+            <a class="nav-link" href="<c:url value="/user/listings"/>">My Listings</a>
             <a class="nav-link" href="<c:url value="/listing/add"/>">Create Listing</a>
-            <a class="nav-link" href="/user/profile">Profile</a>
+            <a class="nav-link" href="<c:url value="/user/profile"/>">Profile</a>
         </nav>
     </div>
 </div>

@@ -12,8 +12,9 @@
     <jsp:body>
         <div class="my-3 p-3 bg-white rounded shadow-sm">
             <h3>Update a listing</h3>
+            <c:url var="search_url" value="update"/>
             <form:form method="POST"
-                       action="./update" modelAttribute="listing">
+                       action="${search_url}" modelAttribute="listing">
                 <div class="form-group">
 
                     <form:label path="id">id</form:label>
