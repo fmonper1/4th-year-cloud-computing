@@ -33,7 +33,7 @@ public class UserFactoryImpl implements UserFactory {
     @Override
     public User loadOrCreateUser(long idFromAuthService, String name, String accessToken) {
         logger.debug("loadOrCreateUser called");
-        Optional<User> maybeUser = userRepo.findById(idFromAuthService);
+        Optional<User> maybeUser = userRepo.getUserByAuthId(idFromAuthService);
 
         User user;
 
