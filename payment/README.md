@@ -39,7 +39,9 @@ You can create a bill using `BillUtility.createBill(int amount)`. This returns t
 
 ##### Payment of the bill
 
-`BillUtility.redirectUserToBillPayment(long billId, String callbackUri)` will direct your user to the appropriate payment page. They will be asked to login if they weren't already. The callback URI is where you want your user to be sent after they accept or decline the payment. This should be an URL you have created, and the query parameter `success` will be attached with a value of `0` for failure or `1` for success. However, this callback is only informational and should not be trusted.
+`BillUtility.redirectUserToBillPayment(HttpResponse response, long billId, String callbackUri)` will direct your user to the appropriate payment page. They will be asked to login if they weren't already. The callback URI is where you want your user to be sent after they accept or decline the payment. This should be an URL you have created, and the query parameter `success` will be attached with a value of `0` for failure or `1` for success. However, this callback is only informational and should not be trusted.
+
+If instead you would prefer a link on the page for them to follow, `BillUtility.getBillPaymentUri(long billId, String callbackUri)` provides the URI used in the method above.
 
 You can then use `BillUtility.verifyBillPaid(long billId)` to assert that a bill has been paid. This simply returns a boolean value.
 
