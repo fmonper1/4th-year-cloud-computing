@@ -38,7 +38,7 @@ public class PaywallCallbackController {
 			@SessionAttribute long billId,
 			@RequestParam boolean success,
 			@RequestParam("state") String encodedState
-	) throws BillUtility.CannotVerifyBillException, UnsupportedEncodingException {
+	) throws CannotVerifyBillException, UnsupportedEncodingException {
 		String state = new String(Base64.getUrlDecoder().decode(encodedState));
 		if (success) {
 			return handleAccept(billId, state);
@@ -47,7 +47,7 @@ public class PaywallCallbackController {
 		}
 	}
 
-	private ModelAndView handleAccept(long billId, String state) throws BillUtility.CannotVerifyBillException, UnsupportedEncodingException {
+	private ModelAndView handleAccept(long billId, String state) throws CannotVerifyBillException, UnsupportedEncodingException {
 		if (billUtility.verifyBillPaid(billId)) {
 			logger.info("Redirecting to: {}", state);
 			return new ModelAndView(new RedirectView(state,true));

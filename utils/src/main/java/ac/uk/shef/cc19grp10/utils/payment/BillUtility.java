@@ -64,13 +64,13 @@ public class BillUtility {
             logger.info("POST for create bill [done]");
 
             if (!res.getStatusCode().is2xxSuccessful()) {
-                throw new CannotCreateBillException();
+                throw new CannotCreateBillException("Status " + res.getStatusCodeValue());
             }
 
             createBillRes = res.getBody();
 
             if (createBillRes == null) {
-                throw new CannotCreateBillException();
+                throw new CannotCreateBillException("Empty body from API");
             }
         }
 
@@ -89,13 +89,13 @@ public class BillUtility {
         logger.info("GET for verify bill [DONE]");
 
         if (!res.getStatusCode().is2xxSuccessful()) {
-            throw new CannotVerifyBillException();
+            throw new CannotVerifyBillException("Status " + res.getStatusCodeValue());
         }
 
         responseBody = res.getBody();
 
         if (responseBody == null) {
-            throw new CannotVerifyBillException();
+            throw new CannotVerifyBillException("Empty body from API");
         }
 
         return responseBody.paid;
@@ -122,7 +122,4 @@ public class BillUtility {
 
         public BillResponse() {}
     }
-
-    public class CannotCreateBillException extends Exception {}
-    public class CannotVerifyBillException extends Exception {}
 }

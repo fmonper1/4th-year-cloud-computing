@@ -40,7 +40,7 @@ public class PaywallInterceptor extends HandlerInterceptorAdapter {
 			HttpServletRequest request,
 			HttpServletResponse response,
 			Object handler
-	) throws BillUtility.CannotCreateBillException, BillUtility.CannotVerifyBillException, IOException {
+	) throws CannotCreateBillException, CannotVerifyBillException, IOException {
 		HttpSession session = request.getSession();
 		Long billId = getBillIdFromSession(session);
 
