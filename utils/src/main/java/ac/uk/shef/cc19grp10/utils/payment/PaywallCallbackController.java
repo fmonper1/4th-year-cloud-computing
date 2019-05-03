@@ -62,7 +62,7 @@ public class PaywallCallbackController {
 		String redirectUri = callbackUri + "?state=" + Base64.getUrlEncoder().encodeToString(state.getBytes());
 
 		model.put("billId", billId);
-		model.put("payUri", billUtility.getBillPaymentUri(billId, redirectUri);
+		model.put("payUri", billUtility.getBillPaymentUri(billId, redirectUri));
 
 		return new ModelAndView("paywall", model);
 	}
