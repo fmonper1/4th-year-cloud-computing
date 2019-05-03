@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 /**
  * Wraps an Account and Transaction together to provide helpful methods for JSP views.
  */
-public class AccountTransactionWrapper {
+public class AccountTransactionWrapper implements Comparable<AccountTransactionWrapper> {
 
     private Account account;
     private Transaction transaction;
@@ -85,6 +85,16 @@ public class AccountTransactionWrapper {
 
     public LocalDateTime getUpdatedAt() {
         return transaction.getUpdatedAt();
+    }
+
+    /**
+     * Compare two transaction wrappers using their wrapped transaction.
+     * @param otherTransactionWrapper Other transaction wrapper
+     * @return Output of delegation to Transaction.compareTo
+     */
+    @Override
+    public int compareTo(AccountTransactionWrapper otherTransactionWrapper) {
+        return transaction.compareTo(otherTransactionWrapper.transaction);
     }
 
     public class AccountTransactionMismatchError extends Exception {}
