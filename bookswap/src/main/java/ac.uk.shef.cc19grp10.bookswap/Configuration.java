@@ -1,13 +1,13 @@
-package ac.uk.shef.cc19grp10.dashboard;
+package ac.uk.shef.cc19grp10.bookswap;
 
-import ac.uk.shef.cc19grp10.dashboard.data.DbUserFactory;
-import ac.uk.shef.cc19grp10.utils.login.LoginInterceptor;
-import ac.uk.shef.cc19grp10.utils.login.UserFactory;
+import ac.uk.shef.cc19grp10.bookswap.data.DbUserFactory;
 import ac.uk.shef.cc19grp10.utils.payment.PaywallInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import ac.uk.shef.cc19grp10.utils.login.LoginInterceptor;
+import ac.uk.shef.cc19grp10.utils.login.UserFactory;
 
 /**
  * <Doc here>
@@ -16,6 +16,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @org.springframework.context.annotation.Configuration
 public class Configuration implements WebMvcConfigurer {
+
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -29,9 +30,11 @@ public class Configuration implements WebMvcConfigurer {
 		//setup login interceptor from utils
 		//(note that /auth/callback and /auth are the minimum ignored paths for login to work correctly)
 		registry.addInterceptor(loginInterceptorBean())
-				.excludePathPatterns("/","/auth/callback","/error","/debug/**","/resources/**","/api/**");
+				.excludePathPatterns("/auth/callback","/error","/img"/* add any other urls that need to be accessible withouh loggin in here*/);
+//				.excludePathPatterns("/","/auth/callback","/error","/img"/* add any other urls that need to be accessible withouh loggin in here*/);
 		registry.addInterceptor(paywallInterceptorBean())
 				.excludePathPatterns("/auth/callback", "/error", "/resources/**", "/api/**", "/payment/callback");
+
 	}
 
 
@@ -40,7 +43,6 @@ public class Configuration implements WebMvcConfigurer {
 	LoginInterceptor loginInterceptorBean(){
 		return new LoginInterceptor();
 	}
-
 
 	//required for login system from utils
 	@Bean
@@ -51,6 +53,7 @@ public class Configuration implements WebMvcConfigurer {
 	//required for login system from utils
 	@Bean
 	UserFactory userFactory(){
-		return new DbUserFactory();
+		return new DbUserFactory(); /*Return and instance of UserFactory here*/
 	}
+
 }
