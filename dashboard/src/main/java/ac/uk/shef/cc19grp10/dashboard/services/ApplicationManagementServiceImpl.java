@@ -148,10 +148,11 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 
 	@Override
 	public Deployment createDeployment(MultipartFile warFile, Application application) throws ApiError {
-		String clientId = application.getClientId();
-		String url = deployWarFile(warFile, application.getUrl());
+		String url = application.getUrl();
+		deployWarFile(warFile, url);
 
-		String bestImagePath = findBestImagePath(clientId);
+		String bestImagePath = findBestImagePath(url);
+		logger.info("Best image path for {} is {}",application.getClientId(),bestImagePath);
 
 		Deployment deployment = deploymentRepo.findByApplication(application);
 		if (deployment == null){
@@ -163,15 +164,21 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 		return deploymentRepo.save(deployment);
 	}
 
-	private String findBestImagePath(String clientId) {
+	private String findBestImagePath(String url) {
 		File catalinaBase = new File( System.getProperty( "catalina.base" ) ).getAbsoluteFile();
-		File webinfDirectory = new File( catalinaBase, "webapps/"+clientId+"/WEB-INF/" );
+		File webinfDirectory = new File( catalinaBase, "/webapps/"+url+"/WEB-INF/" );
+
+		logger.info("Looking for image files in: {} (exists? {})",webinfDirectory.getAbsolutePath(),webinfDirectory.exists());
 
 		//look for image.png image.svg, or image.jpg
 		PathMatcher imageMatcher =
-				FileSystems.getDefault().getPathMatcher("glob:image.{png,jpg,svg}");
+				FileSystems.getDefault().getPathMatcher("glob:**/image.{png,jpg,svg}");
 		//look for image.png image.svg, or image.jpg in the web-inf directory of an application
-		File[] images = webinfDirectory.listFiles(pathname -> imageMatcher.matches(pathname.toPath()));
+		File[] images = webinfDirectory.listFiles(pathname -> {
+			boolean candidate = imageMatcher.matches(pathname.toPath());
+			logger.info("file {} in directory is candidate? {}",pathname,candidate);
+			return candidate;
+		});
 
 		String bestImagePath = null;
 
@@ -185,7 +192,7 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 		return bestImagePath;
 	}
 
-	private String deployWarFile(MultipartFile warFile, String url) throws ApiError {
+	private void deployWarFile(MultipartFile warFile, String url) throws ApiError {
 		MultiValueMap<String,Object> body = new LinkedMultiValueMap<>();
 		try {
 			body.add("file",new InputStreamResource(warFile.getInputStream()));
@@ -212,7 +219,6 @@ public class ApplicationManagementServiceImpl implements ApplicationManagementSe
 			logger.warn("Manager deploy responded with: {}",resBody);
 			throw new ApiError();
 		}
-		return url;
 	}
 
 

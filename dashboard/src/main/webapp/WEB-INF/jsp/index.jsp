@@ -14,11 +14,11 @@
     <section class="jumbotron text-center">
         <div class="container">
             <h1 class="jumbotron-heading">Student Cloud Suite</h1>
-            <p class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don’t simply skip over it entirely.</p>
+            <p class="lead text-muted">Welcome to the cloud.</p>
             <p>
                 <c:choose>
                     <c:when test="${user != null}">
-                        Hello ${username}!
+                        Hello ${user.name}!
                     </c:when>
                     <c:otherwise>
                         <a href="<c:url value="/login"/>" class="btn btn-primary my-2">Signup or login</a>
@@ -37,6 +37,7 @@
                         <div class="card h-100 mb-4 shadow-sm">
                             <img class="bd-placeholder-img card-img-top" src="<c:url value="/api/app/${app.id}/image" />" />
                             <div class="card-body">
+                                <h5 class="card-title">${app.name}</h5>
                                 <p class="card-text">${app.description}</p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="btn-group">
