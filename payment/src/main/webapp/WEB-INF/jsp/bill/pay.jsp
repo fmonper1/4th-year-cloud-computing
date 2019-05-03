@@ -20,7 +20,10 @@
                             Who are you paying?
                         </div>
                         <div class="card-body">
-                            <p class="card-text">You're actually gonna pay some account with ID ${bill.toAccount.id}.</p>
+                            <p class="card-text">This payment will be deposited into account number ${bill.toAccount.id}.</p>
+                            <c:if test="${bill.toAccount.owner != null}">
+                                <p class="card-text">This account is owned by ${bill.toAccount.owner.name}.</p>
+                            </c:if>
                         </div>
                     </div>
                 </div>
@@ -36,7 +39,7 @@
                                 </div>
                             </c:if>
 
-                            <p class="card-text">Do you want to make a payment of ${bill.amount} peanuts to the account ${bill.toAccount.id}?</p>
+                            <p class="card-text">Do you want to make a payment of ${bill.amount} peanuts to account number ${bill.toAccount.id}?</p>
 
                             <div class="d-flex justify-content-between align-items-center">
                                 <form:form method="POST">
