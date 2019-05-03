@@ -6,6 +6,11 @@ services:
       - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8079:8080
 #  tomcat:
 #    image: tomcat:8-slim
 #    ports:

@@ -61,10 +61,15 @@ public class AuthCallbackController {
 	}
 
 	@GetMapping(params = "!error")
-	public ModelAndView handleSuccess(@RequestParam("code") String authCode, @RequestParam("state") String state, HttpServletRequest request) throws UnsupportedEncodingException {
+	public ModelAndView handleSuccess(
+			@RequestParam("code") String authCode,
+			@RequestParam String state,
+			HttpServletRequest request
+	) throws AuthServiceException {
 		logger.info("handleSuccess");
 		logger.info("authServletBase: {}", authServletBase);
 		TokenResponse tokenResponse;
+
 		{
 			LinkedMultiValueMap<String,String> requestForm = new LinkedMultiValueMap<>();
 			requestForm.add("grant_type","authorization_code");
@@ -81,43 +86,47 @@ public class AuthCallbackController {
 			ResponseEntity<TokenResponse> res = restTemplate.exchange(tokenRequest,TokenResponse.class);
 			logger.info("post for token done");
 			if (!res.getStatusCode().is2xxSuccessful()) {
-				return new ModelAndView("AuthError");
+				throw new AuthServiceException("Received Status " + res.getStatusCodeValue());
 			}
 			tokenResponse = res.getBody();
 			if (tokenResponse == null) {
-				return new ModelAndView("AuthError");
+				throw new AuthServiceException("Empty response body");
 			}
 			if (tokenResponse.error != null) {
-				return new ModelAndView("AuthError");
+				throw new AuthServiceException(tokenResponse.error);
 			}
 		}
+
 		{
 			HashMap<String, String> variables = new HashMap<>();
-			variables.put("access_token",tokenResponse.accessToken);
-			variables.put("client_id",clientId);
+			variables.put("access_token", tokenResponse.accessToken);
+			variables.put("client_id", clientId);
 			logger.info("get for user");
 			ResponseEntity<UserResponse> res = restTemplate.getForEntity(authServletBase+"/verify?client_id={client_id}&access_token={access_token}", UserResponse.class, variables);
 			logger.info("get for user done");
+
 			if (!res.getStatusCode().is2xxSuccessful()) {
-				return new ModelAndView("AuthError");
+				throw new AuthServiceException();
 			}
 			UserResponse userResponse = res.getBody();
 			if (userResponse == null) {
-				return new ModelAndView("AuthError");
+				throw new AuthServiceException("Empty response body");
 			}
+
 			Object user = userFactory.loadOrCreateUser(userResponse.id, userResponse.name, tokenResponse.accessToken);
-			logger.info("Setting user to: {}",user);
-			request.getSession().setAttribute("user",user);
+			logger.info("Setting user to: {}", user);
+			request.getSession().setAttribute("user", user);
 		}
+
 		state = new String(Base64.getUrlDecoder().decode(state));
-		logger.info("Redirecting to: {}",state);
+		logger.info("Redirecting to: {}", state);
 		return new ModelAndView(new RedirectView(state,true));
 	}
 
 	@GetMapping
-	public String handleError(@RequestParam("error") String error, @RequestParam("state") String state){
+	public String handleError(@RequestParam("error") String error) throws AuthServiceException {
 		logger.info("handleError");
-		return "AuthError";
+		throw new AuthServiceException(error);
 	}
 
 

@@ -1,0 +1,28 @@
+{
+  "properties": [
+    {
+      "name": "payment.platform_cut",
+      "type": "java.lang.Float"
+    },
+    {
+      "name": "auth.auth_servlet_url",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "auth.verify_servlet_url",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "auth.client_id",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "auth.client_secret",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "auth.redirect_uri",
+      "type": "java.lang.String"
+    }
+  ]
+}
