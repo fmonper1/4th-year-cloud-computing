@@ -1,6 +1,7 @@
 package ac.uk.shef.cc19grp10.tutorFinder;
 
 import ac.uk.shef.cc19grp10.utils.login.LoginInterceptor;
+import ac.uk.shef.cc19grp10.utils.payment.PaywallInterceptor;
 import ac.uk.shef.cc19grp10.utils.login.UserFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -29,12 +30,21 @@ public class Configuration implements WebMvcConfigurer {
         //(note that /auth/callback and /auth are the minimum ignored paths for login to work correctly)
         registry.addInterceptor(loginInterceptorBean())
                 .excludePathPatterns("/demo/","/auth/callback","/error"/* add any other urls that need to be accessible withouh loggin in here*/);
+
+        registry.addInterceptor(paywallInterceptorBean())
+                .excludePathPatterns("/auth/callback", "/error", "/resources/**", "/api/**", "/payment/callback");
+
     }
 
 
     @Bean
     LoginInterceptor loginInterceptorBean(){
         return new LoginInterceptor();
+    }
+
+    @Bean
+    PaywallInterceptor paywallInterceptorBean(){
+        return new PaywallInterceptor();
     }
 
     //required for login system from utils

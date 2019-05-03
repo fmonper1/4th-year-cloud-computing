@@ -10,9 +10,8 @@
         <div class="row justify-content-center">
             <div class="col-md-10">
                 <div class="d-flex align-items-center p-3 text-white-50 bg-blue rounded shadow-sm text-center">
-                    <div class="text-center">
-                        <h3 class="media-heading" style="color: white">${firstName} ${lastName}</h3>
-                    </div>
+                  <h3 class="media-heading" style="color: black">${firstName} ${lastName}</h3>
+
                 </div>
                 <div id="container">
                     <span><strong>Subjects Taught: </strong></span>
