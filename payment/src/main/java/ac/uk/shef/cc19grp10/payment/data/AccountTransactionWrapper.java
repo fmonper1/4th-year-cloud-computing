@@ -63,6 +63,14 @@ public class AccountTransactionWrapper implements Comparable<AccountTransactionW
         return transaction.getToAccount();
     }
 
+    public LocalDateTime getCreatedAt() {
+        return transaction.getCreatedAt();
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return transaction.getUpdatedAt();
+    }
+
     /**
      * Determines if the transaction was a credit with respect to the account.
      * @return If the transaction credited the account.
@@ -79,12 +87,35 @@ public class AccountTransactionWrapper implements Comparable<AccountTransactionW
         return !isCredit();
     }
 
-    public LocalDateTime getCreatedAt() {
-        return transaction.getCreatedAt();
+    /**
+     * Gets a nice name for the from account.
+     * @return Nice name for from account.
+     */
+    public String getFromAccountName() {
+        return getNameForAccount(getFromAccount());
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return transaction.getUpdatedAt();
+    /**
+     * Gets a nice name for the to account.
+     * @return Nice name for to account.
+     */
+    public String getToAccountName() {
+        return getNameForAccount(getToAccount());
+    }
+
+    /**
+     * Gets a nice name for the account given.
+     * @param account Account to produce nice name for.
+     * @return Nice name for account.
+     */
+    private String getNameForAccount(Account account) {
+        User owner = account.getOwner();
+
+        if (owner != null) {
+            return owner.getName() + " (#" + account.getId() + ")";
+        } else {
+            return "Account " + account.getId();
+        }
     }
 
     /**
