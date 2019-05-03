@@ -13,13 +13,14 @@
     <jsp:body>
 
         <div class="d-flex align-items-center p-3 my-3 text-white-50 bg-blue rounded shadow-sm">
-            <img class="mr-3" src="img/package.svg" alt="" width="48" height="48">
+            <img class="mr-3" src="<c:url value="img/package.svg"/>" alt="" width="48" height="48">
             <div class="lh-100">
                 <h6 class="mb-0 text-white lh-100">Search for specific items</h6>
                 <small>Trade books directly with other students.</small>
             </div>
         </div>
-        <form:form method="GET" action="/search" >
+        <c:url var="search_url" value="search"/>
+        <form:form method="GET" action="${search_url}" >
             <div class="input-group mb-3">
                 <input name="parameter" type="text" class="form-control form-control-lg" placeholder="Search by listing title, department code or module code" aria-label="Book Name" aria-describedby="button-addon2">
                 <div class="input-group-append">
@@ -30,7 +31,7 @@
 
 
         <div class="d-flex align-items-center p-3 my-3 text-white-50 bg-purple rounded shadow-sm">
-            <img class="mr-3" src="img/package.svg" alt="" width="48" height="48">
+            <img class="mr-3" src="<c:url value='img/package.svg'/>" alt="" width="48" height="48">
             <div class="lh-100">
                 <h6 class="mb-0 text-white lh-100">Most Recent Listings</h6>
                 <small>Listings created by other users appear here.</small>
@@ -47,16 +48,13 @@
                     <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
                         <div class="d-flex justify-content-between align-items-center w-100">
                             <strong class="text-gray-dark">[${listing.moduleCode}] ${listing.title}</strong>
-                            <a href="listing/${listing.id}/view">View Listing</a>
+                            <a href="<c:url value="listing/${listing.id}/view"/>">View Listing</a>
                         </div>
                         <span class="d-block">${listing.description}</span>
                     </div>
                 </div>
 
             </c:forEach>
-            <small class="d-block text-right mt-3">
-                <a href="#">All trade offers</a>
-            </small>
         </div>
 
 
