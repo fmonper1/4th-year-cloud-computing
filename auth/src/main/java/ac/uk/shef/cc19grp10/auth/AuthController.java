@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/auth")
@@ -89,7 +91,7 @@ public class AuthController {
 		return completeAuthorisationSuccess(authorisation,redirect,state);
 	}
 	private ModelAndView completeAuthorisationSuccess(Authorisation authorisation, String redirect, String state) throws URISyntaxException {
-		String authParams = "code="+authorisation.getAuthCodeEncoded();;
+		String authParams = "code="+authorisation.getAuthCodeEncoded();
 		if (state != null){
 			authParams += "&state=" + state;
 		}
@@ -104,7 +106,7 @@ public class AuthController {
 			redirect += "&";
 		}
 		redirect += authParams;
-		return new ModelAndView("redirect:"+redirect);
+		return new ModelAndView(new RedirectView(redirect,false));
 	}
 
 	public class AuthForm{

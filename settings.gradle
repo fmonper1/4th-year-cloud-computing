@@ -3,9 +3,15 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 rootProject.name = 'cloud'
-include 'demo'
+
 include 'auth'
 include 'dashboard'
-include 'utils'
+
 include 'tutorFinder'
+include 'payment'
+
+include 'demo'
+
+include 'utils'

@@ -1,5 +1,7 @@
 package ac.uk.shef.cc19grp10.dashboard.data;
 
+import ac.uk.shef.cc19grp10.dashboard.utils.NameUtils;
+
 import javax.persistence.*;
 
 @Entity
@@ -73,5 +75,17 @@ public class Application {
 
 	public void setDbApplication(DbApplication dbApplication) {
 		this.dbApplication = dbApplication;
+	}
+
+	public String getUrl(){
+		return NameUtils.nameToUrl(this.name);
+	}
+
+	public String getClientId() {
+		return NameUtils.nameToClientId(this.name);
+	}
+
+	public String getSchemaName() {
+		return NameUtils.nameToSchemaName(this.name);
 	}
 }

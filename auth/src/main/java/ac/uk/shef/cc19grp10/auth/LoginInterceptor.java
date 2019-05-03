@@ -28,7 +28,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 			if(request.getQueryString()!=null){
 				queryString = "?"+request.getQueryString();
 			}
-			String redirectTo = request.getRequestURI() + queryString;
+			String redirectTo = (request.getRequestURI() + queryString).substring(request.getContextPath().length());
 			request.getSession().setAttribute("loginRedirect",redirectTo);
 			response.sendRedirect(request.getContextPath() + "/login");
 			return false;

@@ -24,6 +24,6 @@ public class DashboardController {
     @GetMapping("/")
     public ModelAndView index(HttpServletRequest request){
     	logger.info("Url: {}",request.getRequestURL());
-        return new ModelAndView("index", "apps",appRepo.findAll());
+        return new ModelAndView("index", "apps",appRepo.findAllDeployed());
     }
 }

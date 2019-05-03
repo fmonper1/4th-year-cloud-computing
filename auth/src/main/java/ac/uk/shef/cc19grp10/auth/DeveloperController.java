@@ -1,9 +1,6 @@
 package ac.uk.shef.cc19grp10.auth;
 
-import ac.uk.shef.cc19grp10.auth.data.Application;
-import ac.uk.shef.cc19grp10.auth.data.ApplicationRepository;
-import ac.uk.shef.cc19grp10.auth.data.Authorisation;
-import ac.uk.shef.cc19grp10.auth.data.User;
+import ac.uk.shef.cc19grp10.auth.data.*;
 import ac.uk.shef.cc19grp10.auth.services.ApplicationManagement;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
@@ -36,6 +33,9 @@ public class DeveloperController {
 
 	@Autowired
 	ApplicationRepository appRepo;
+
+	@Autowired
+	UserRepository userRepository;
 
 	Logger logger = LoggerFactory.getLogger(DeveloperController.class);
 

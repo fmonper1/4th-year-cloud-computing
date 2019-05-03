@@ -43,16 +43,22 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-8 col-md-7 py-4">
-                    <h4 class="text-white"><img id="peanut" src="<c:url value="/resources/img/peanut.svg" />"> Peanut Bank</h4>
-                    <p class="text-muted">Peanuts are the equivalent of credit. You will need peanuts in order to use the services available in the platform.</p>
-                    <p class="text-white">Peanuts in bank: 15<br>Peanuts used in the last 30 days: 3/30</p>
+                    <c:if test="${user != null}">
+                        <p class="text-white">You are logged in as ${user.name}</p>
+                    </c:if>
                 </div>
                 <div class="col-sm-4 offset-md-1 py-4">
                     <h4 class="text-white">Navigation</h4>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-white">Profile</a></li>
-                        <li><a href="#" class="text-white">Signout</a></li>
-                        <li><a href="/developer" class="text-white">Developer</a></li>
+                        <li><a href="<c:url value="/developer"/>" class="text-white">Developer</a></li>
+                        <c:choose>
+                            <c:when test="${user != null}">
+                                <li><a href="/auth/logout" class="text-white">Log out</a></li>
+                            </c:when>
+                            <c:otherwise>
+                                <li><a href="<c:url value="/login"/>" class="text-white">Signup or login</a></li>
+                            </c:otherwise>
+                        </c:choose>
                     </ul>
                 </div>
             </div>
@@ -60,7 +66,7 @@
     </div>
     <div class="navbar navbar-dark bg-dark shadow-sm">
         <div class="container d-flex justify-content-between">
-            <a href="#" class="navbar-brand d-flex align-items-center">
+            <a href="<c:url value="/" />" class="navbar-brand d-flex align-items-center">
                 <img id="cloud" src="<c:url value="/resources/img/cloud.svg" />">
                 <strong> Cloud Student Suite</strong>
             </a>

@@ -19,10 +19,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 
 /**
@@ -43,7 +48,7 @@ public class AuthCallbackController {
 	private String clientId;
 	@Value("${auth.client_secret}")
 	private String clientSecret;
-	@Value("${auth.auth_servlet_url:http://143.167.9.214:8080/auth}")
+	@Value("${auth.verify_servlet_url}")
 	private String authServletBase;
 
 	@Autowired
@@ -56,10 +61,15 @@ public class AuthCallbackController {
 	}
 
 	@GetMapping(params = "!error")
-	public String handleSuccess(@RequestParam("code") String authCode, @RequestParam("state") String state, HttpServletRequest request){
+	public ModelAndView handleSuccess(
+			@RequestParam("code") String authCode,
+			@RequestParam String state,
+			HttpServletRequest request
+	) throws AuthServiceException {
 		logger.info("handleSuccess");
 		logger.info("authServletBase: {}", authServletBase);
 		TokenResponse tokenResponse;
+
 		{
 			LinkedMultiValueMap<String,String> requestForm = new LinkedMultiValueMap<>();
 			requestForm.add("grant_type","authorization_code");
@@ -76,42 +86,47 @@ public class AuthCallbackController {
 			ResponseEntity<TokenResponse> res = restTemplate.exchange(tokenRequest,TokenResponse.class);
 			logger.info("post for token done");
 			if (!res.getStatusCode().is2xxSuccessful()) {
-				return "AuthError";
+				throw new AuthServiceException("Received Status " + res.getStatusCodeValue());
 			}
 			tokenResponse = res.getBody();
 			if (tokenResponse == null) {
-				return "AuthError";
+				throw new AuthServiceException("Empty response body");
 			}
 			if (tokenResponse.error != null) {
-				return "AuthError";
+				throw new AuthServiceException(tokenResponse.error);
 			}
 		}
+
 		{
 			HashMap<String, String> variables = new HashMap<>();
-			variables.put("access_token",tokenResponse.accessToken);
-			variables.put("client_id",clientId);
+			variables.put("access_token", tokenResponse.accessToken);
+			variables.put("client_id", clientId);
 			logger.info("get for user");
 			ResponseEntity<UserResponse> res = restTemplate.getForEntity(authServletBase+"/verify?client_id={client_id}&access_token={access_token}", UserResponse.class, variables);
 			logger.info("get for user done");
+
 			if (!res.getStatusCode().is2xxSuccessful()) {
-				return "AuthError";
+				throw new AuthServiceException();
 			}
 			UserResponse userResponse = res.getBody();
 			if (userResponse == null) {
-				return "AuthError";
+				throw new AuthServiceException("Empty response body");
 			}
+
 			Object user = userFactory.loadOrCreateUser(userResponse.id, userResponse.name, tokenResponse.accessToken);
-			logger.info("Setting user to: {}",user);
-			request.getSession().setAttribute("user",user);
+			logger.info("Setting user to: {}", user);
+			request.getSession().setAttribute("user", user);
 		}
-		logger.info("Redirecting to: {}",state);
-		return "redirect:"+request.getContextPath()+state;
+
+		state = new String(Base64.getUrlDecoder().decode(state));
+		logger.info("Redirecting to: {}", state);
+		return new ModelAndView(new RedirectView(state,true));
 	}
 
 	@GetMapping
-	public String handleError(@RequestParam("error") String error, @RequestParam("state") String state){
+	public String handleError(@RequestParam("error") String error) throws AuthServiceException {
 		logger.info("handleError");
-		return "AuthError";
+		throw new AuthServiceException(error);
 	}
 
 

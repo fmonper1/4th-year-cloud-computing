@@ -95,7 +95,7 @@ public class DeveloperController {
 			@SessionAttribute("user") User user
 	)
 	{
-		Application application = user.getApplication();
+		Application application = appRepo.findByOwner(user);
 		if(application == null){
 			bindingResult.addError(new ObjectError("createDeploymentForm","You must create the parent application first"));
 		}
@@ -114,7 +114,7 @@ public class DeveloperController {
 			));
 			return new ModelAndView("developer/upload");
 		}
-		return new ModelAndView(new RedirectView("/developer"));
+		return new ModelAndView(new RedirectView("/developer",true));
 	}
 
 	@PostMapping("/create")
@@ -132,7 +132,7 @@ public class DeveloperController {
 				createApplicationForm.description,
 				user
 		);
-		return new ModelAndView(new RedirectView("/developer"));
+		return new ModelAndView(new RedirectView("/developer",true));
 	}
 
 	@PostMapping("/auth/create")
@@ -142,7 +142,7 @@ public class DeveloperController {
 			@SessionAttribute("user") User user
 	)
 	{
-		Application application = user.getApplication();
+		Application application = appRepo.findByOwner(user);
 		if(application == null){
 			bindingResult.addError(new ObjectError("createApplicationForm","You must create the parent application first"));
 		}
@@ -162,7 +162,7 @@ public class DeveloperController {
 			));
 			return new ModelAndView("developer/auth/create");
 		}
-		return new ModelAndView(new RedirectView("/developer"));
+		return new ModelAndView(new RedirectView("/developer",true));
 	}
 
 	@PostMapping("/db/create")
@@ -172,7 +172,7 @@ public class DeveloperController {
 			@SessionAttribute("user") User user
 	)
 	{
-		Application application = user.getApplication();
+		Application application = appRepo.findByOwner(user);
 		if(application == null){
 			bindingResult.addError(new ObjectError("createApplicationForm","You must create the parent application first"));
 		}
@@ -183,7 +183,7 @@ public class DeveloperController {
 				createApplicationForm.databasePassword,
 				application
 		);
-		return new ModelAndView(new RedirectView("/developer"));
+		return new ModelAndView(new RedirectView("/developer",true));
 	}
 
 	public class CreateAuthApplicationForm{

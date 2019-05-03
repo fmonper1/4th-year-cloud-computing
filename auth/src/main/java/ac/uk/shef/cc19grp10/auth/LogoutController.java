@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -25,7 +26,8 @@ public class LogoutController {
 			session.invalidate();
 		}
 
-		return new ModelAndView("redirect:/login");
+		//redirect to the root
+		return new ModelAndView(new RedirectView("/",false));
 	}
 
 }
