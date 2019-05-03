@@ -9,15 +9,15 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  * Entry point for the Payment Service Spring Application
  */
 @SpringBootApplication(scanBasePackages = {"ac.uk.shef.cc19grp10.payment", "ac.uk.shef.cc19grp10.utils.login"})
-public class PaymentApplication extends SpringBootServletInitializer {
+public class Application extends SpringBootServletInitializer {
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(PaymentApplication.class);
+		return application.sources(Application.class);
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(PaymentApplication.class, args);
+		SpringApplication.run(Application.class, args);
 	}
 
 }

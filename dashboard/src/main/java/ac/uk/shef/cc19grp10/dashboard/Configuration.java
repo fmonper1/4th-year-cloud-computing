@@ -3,6 +3,7 @@ package ac.uk.shef.cc19grp10.dashboard;
 import ac.uk.shef.cc19grp10.dashboard.data.DbUserFactory;
 import ac.uk.shef.cc19grp10.utils.login.LoginInterceptor;
 import ac.uk.shef.cc19grp10.utils.login.UserFactory;
+import ac.uk.shef.cc19grp10.utils.payment.PaywallInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -29,6 +30,8 @@ public class Configuration implements WebMvcConfigurer {
 		//(note that /auth/callback and /auth are the minimum ignored paths for login to work correctly)
 		registry.addInterceptor(loginInterceptorBean())
 				.excludePathPatterns("/","/auth/callback","/error","/debug/**","/resources/**","/api/**");
+		registry.addInterceptor(paywallInterceptorBean())
+				.excludePathPatterns("/auth/callback", "/error", "/resources/**", "/api/**", "/payment/callback");
 	}
 
 
@@ -36,6 +39,13 @@ public class Configuration implements WebMvcConfigurer {
 	@Bean
 	LoginInterceptor loginInterceptorBean(){
 		return new LoginInterceptor();
+	}
+
+
+	//required for login system from utils
+	@Bean
+	PaywallInterceptor paywallInterceptorBean(){
+		return new PaywallInterceptor();
 	}
 
 	//required for login system from utils

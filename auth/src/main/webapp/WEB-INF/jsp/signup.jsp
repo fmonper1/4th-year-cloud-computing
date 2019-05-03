@@ -20,7 +20,7 @@
 <body>
     <div class="container h-100">
         <div class="row h-100 justify-content-center align-items-center">
-            <div class="col-4">
+            <div>
                 <form:form method="POST" modelAttribute="signupForm">
                     <form:errors cssClass="alert alert-danger" element="div"/>
                     <my:bs-input path="username" placeholder="Username" label="Username" type="text"/>

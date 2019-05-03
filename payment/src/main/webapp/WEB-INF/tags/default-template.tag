@@ -36,41 +36,12 @@
     </head>
     <body class="d-flex flex-column">
         <header>
-            <div class="collapse bg-dark" id="navbarHeader">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-8 col-md-7 py-4">
-                            <h4 class="text-white"><img id="peanut" src="<c:url value="/resources/img/peanut.svg" />"> Peanut Bank</h4>
-                            <p class="text-light">Peanuts are the equivalent of credit. You will need peanuts in order to use the services available in the platform.</p>
-
-                            <c:if test="${currentUser != null && currentUser.account != null}">
-                                <p class="text-white">Peanuts in bank: ${currentUser.account.balance}</p>
-                            </c:if>
-                        </div>
-                        <div class="col-sm-4 offset-md-1 py-4">
-                            <h4 class="text-white">Navigation</h4>
-                            <ul class="list-unstyled">
-                                <c:if test="${currentUser == null}">
-                                    <li><a href="<c:url value="/account" />" class="text-white">View Your Account</a></li>
-                                </c:if>
-                                <c:if test="${currentUser != null}">
-                                    <li><a href="<c:url value="/account" />" class="text-white">${currentUser.name}'s Account</a></li>
-                                </c:if>
-<%--                                <li><a href="#" class="text-white">Signout</a></li>--%>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="navbar navbar-dark bg-dark shadow-sm">
                 <div class="container d-flex justify-content-between">
                     <a href="<c:url value="/" />" class="navbar-brand d-flex align-items-center">
-                        <img id="cloud" src="<c:url value="/resources/img/cloud.svg" />">
-                        <strong>Cloud Student Suite</strong>
+                        <img id="cloud" src="<c:url value="/resources/img/peanut.svg" />">
+                        <strong>Peanut Bank</strong>
                     </a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
                 </div>
             </div>
         </header>

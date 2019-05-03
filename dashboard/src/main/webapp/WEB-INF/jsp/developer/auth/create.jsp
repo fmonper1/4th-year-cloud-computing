@@ -18,7 +18,7 @@
             <div class="col-4">
                 <form:form method="POST" modelAttribute="createAuthApplicationForm">
                     <form:errors cssClass="alert alert-danger" element="div"/>
-                    <my:bs-input path="redirectUri" placeholder="Redirect Uri" label="Redirect Uri" type="text"/>
+                    <my:bs-input path="redirectUri" placeholder="Redirect Uri" label="Redirect Uri" type="text" help="This should be prefixed with your servlet mount path (${mountPath})"/>
                     <input type="submit" value="Create Application" class="btn btn-primary btn-block"/>
                 </form:form>
             </div>

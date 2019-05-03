@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Controller for account related user pages.
@@ -42,10 +39,12 @@ public class AccountController {
 		model.put("account", account);
 
 		// Generate transactions with decorated methods for current account
-		Set<AccountTransactionWrapper> decoratedTransactions = new HashSet<>();
+		List<AccountTransactionWrapper> decoratedTransactions = new ArrayList<>();
 		for (Transaction transaction : account.getTransactions()) {
 			decoratedTransactions.add(new AccountTransactionWrapper(account, transaction));
 		}
+
+		decoratedTransactions.sort(Collections.reverseOrder());
 
 		model.put("transactions", decoratedTransactions);
 

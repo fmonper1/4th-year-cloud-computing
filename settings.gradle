@@ -1,3 +1,4 @@
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -11,6 +12,7 @@ include 'dashboard'
 
 include 'tutorFinder'
 include 'payment'
+include 'bookswap'
 
 include 'demo'
 
