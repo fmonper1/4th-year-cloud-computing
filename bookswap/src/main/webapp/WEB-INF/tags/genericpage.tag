@@ -59,9 +59,9 @@
                 <div class="col-sm-4 offset-md-1 py-4">
                     <h4 class="text-white">Navigation</h4>
                     <ul class="list-unstyled">
-                        <li><a href="<c:url value="./"/>" class="text-white">Back to Dashboard</a></li>
-                        <li><a href="#" class="text-white">Peanut Bank</a></li>
-                        <li><a href="#" class="text-white">Tutor Finder</a></li>
+                        <li><a href="/" class="text-white">Back to Dashboard</a></li>
+                        <li><a href="/app_payments" class="text-white">Peanut Bank</a></li>
+                        <li><a href="/app_tutor_finder" class="text-white">Tutor Finder</a></li>
                     </ul>
                 </div>
             </div>

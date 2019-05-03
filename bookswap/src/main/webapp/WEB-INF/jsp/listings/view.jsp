@@ -26,7 +26,7 @@
             <h4 class="border-bottom border-gray pb-2">Listing Details</h4>
 
             <p>${listing.description}</p>
-            <p>created by: ${listing.user.name}</p>
+            <p>created by: ${listing.user.name}, ${listing.user.email}, ${listing.user.altEmail}</p>
 
             <c:if test="${isOwner}">
                 <a class="btn btn-primary" href="<c:url value="update"/>">Edit</a>

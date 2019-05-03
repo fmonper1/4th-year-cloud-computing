@@ -15,8 +15,6 @@
             <ul>
             <c:forEach  items="${listings}" var="listing">
                 <li>
-                    <strong class="text-gray-dark">Looking for </strong>
-
                     <a href="<c:url value="/listing/${listing.id}/view"/>">${listing.moduleCode} - ${listing.title}</a>
                     <span class="d-block"><fmt:formatDate value="${listing.createDateTime}" pattern="yyyy-MM-dd HH:mm:ss" /></span>
                 </li>
