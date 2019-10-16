@@ -15,7 +15,7 @@ public class IndexController {
 	@GetMapping
 	public ModelAndView getIndex()
 	{
-		return new ModelAndView("index");
+		return new ModelAndView("redirect:/account");
 	}
 
 }

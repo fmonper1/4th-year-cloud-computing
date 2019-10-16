@@ -74,10 +74,12 @@ public class DeveloperController {
 
 	@GetMapping("/auth/create")
 	public ModelAndView createApplication(
-			@ModelAttribute CreateAuthApplicationForm createApplicationForm
+			@ModelAttribute CreateAuthApplicationForm createApplicationForm,
+			@SessionAttribute("user") User user
 	)
 	{
-		return new ModelAndView("developer/auth/create");
+		Application app = appRepo.findByOwner(user);
+		return new ModelAndView("developer/auth/create","mountPath",app.getUrl());
 	}
 
 	@GetMapping("/db/create")

@@ -32,29 +32,13 @@ public class MainController {
 
 
     private final Logger logger = LoggerFactory.getLogger(MainController.class);
-//    @GetMapping(path="/add") // Map ONLY GET Requests
-//    public @ResponseBody String addNewUser (@RequestParam String name
-//            , @RequestParam String email) {
-//        // @ResponseBody means the returned String is the response, not a view name
-//        // @RequestParam means it is a parameter from the GET or POST request
-//
-//        User n = new User();
-//        n.setName(name);
-//        n.setEmail(email);
-//        userRepository.save(n);
-//        return "Saved";
-//    }
+
 
     private static List<Tutor> tutors = new ArrayList<Tutor>();
     private static List<Tutor> tutorsFound = new ArrayList<Tutor>();
     private static List<Subject> subjects = new ArrayList<Subject>();
     private static List<Subject> relatedSubjects = new ArrayList<Subject>();
 
-    @RequestMapping(value = "/map", method = RequestMethod.GET)
-    public String map(){
-        //logger.info("index() executed");
-        return "map";
-    }
 
     @GetMapping(value = { "/", "/index" })
     public String index(Model model) {
@@ -86,7 +70,7 @@ public class MainController {
             subjectRepository.findByName(object.getName()).forEach(relatedSubjects::add);
         }
         if(relatedSubjects.isEmpty()){
-            logger.info("its empty broooooo");
+            logger.info("its empty");
         }
         System.out.println(relatedSubjects.size());
         relatedSubjects.stream().distinct().collect(Collectors.toList());
@@ -115,7 +99,7 @@ public class MainController {
         tutorsFound.clear();
         tutorRepository.findByName(surname).forEach(tutorsFound::add);
         if(tutorsFound.isEmpty()){
-            logger.info("its empty broooooo");
+            logger.info("its empty");
         }
 
         model.addAttribute("results", tutorsFound);
@@ -127,28 +111,12 @@ public class MainController {
         subjects.clear();
         subjectRepository.findByName(subject).forEach(subjects::add);
         if(subjects.isEmpty()){
-            logger.info("its empty broooooo");
+            logger.info("its empty");
         }
 
         model.addAttribute("subjectResults", subjects);
 
         return "subjectResults";
     }
-//    public String index(Model model) {
-//        tutors.clear();
-//        tutorRepository.findAll().forEach(tutors::add);
-//
-//        model.addAttribute("tutors", tutors);
-//
-//        return "index";
-//    }
-//
 
-//    @GetMapping(path="/all")
-//    public @ResponseBody Iterable<Subject> getAllSubjects() {
-//        // This returns a JSON or XML with the users
-//
-//        return subjectRep.findAll();
-//
-//    }
 }

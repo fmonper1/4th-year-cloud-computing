@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 /**
  * Wraps an Account and Transaction together to provide helpful methods for JSP views.
  */
-public class AccountTransactionWrapper {
+public class AccountTransactionWrapper implements Comparable<AccountTransactionWrapper> {
 
     private Account account;
     private Transaction transaction;
@@ -63,6 +63,14 @@ public class AccountTransactionWrapper {
         return transaction.getToAccount();
     }
 
+    public LocalDateTime getCreatedAt() {
+        return transaction.getCreatedAt();
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return transaction.getUpdatedAt();
+    }
+
     /**
      * Determines if the transaction was a credit with respect to the account.
      * @return If the transaction credited the account.
@@ -79,12 +87,45 @@ public class AccountTransactionWrapper {
         return !isCredit();
     }
 
-    public LocalDateTime getCreatedAt() {
-        return transaction.getCreatedAt();
+    /**
+     * Gets a nice name for the from account.
+     * @return Nice name for from account.
+     */
+    public String getFromAccountName() {
+        return getNameForAccount(getFromAccount());
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return transaction.getUpdatedAt();
+    /**
+     * Gets a nice name for the to account.
+     * @return Nice name for to account.
+     */
+    public String getToAccountName() {
+        return getNameForAccount(getToAccount());
+    }
+
+    /**
+     * Gets a nice name for the account given.
+     * @param account Account to produce nice name for.
+     * @return Nice name for account.
+     */
+    private String getNameForAccount(Account account) {
+        User owner = account.getOwner();
+
+        if (owner != null) {
+            return owner.getName() + " (#" + account.getId() + ")";
+        } else {
+            return "Account " + account.getId();
+        }
+    }
+
+    /**
+     * Compare two transaction wrappers using their wrapped transaction.
+     * @param otherTransactionWrapper Other transaction wrapper
+     * @return Output of delegation to Transaction.compareTo
+     */
+    @Override
+    public int compareTo(AccountTransactionWrapper otherTransactionWrapper) {
+        return transaction.compareTo(otherTransactionWrapper.transaction);
     }
 
     public class AccountTransactionMismatchError extends Exception {}
